@@ -6,3 +6,12 @@ def home(request):
 
 def menu(request):
     return render(request, 'menu.html', {})
+
+def signup(request):
+    return render(request, "signup.html", {})
+
+def signout(request):
+    return render(request, "signout.html", {})
+
+def signup(request):
+    pass
