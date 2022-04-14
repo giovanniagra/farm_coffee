@@ -49,3 +49,4 @@ def logout_request(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect("farm_coffee_app:home")
+
