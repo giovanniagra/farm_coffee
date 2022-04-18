@@ -63,9 +63,17 @@ def user_details(request, user_id):
 #product CRUD
 
 def create_product(request):   
-
     form = ProductForm()
-
-
+    if request.method == "POST":
+        # print('Printing POST:', request.POST)
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
     context = {'form': form}
-    return render(request, 'templates/product.html', context)
+    return render(request, template_name='product.html', context=context)
+
+def update_product(request, pk):
+    form = ProductForm()
+    context = {'form': form}
+    return render(request, template_name='product.html', context=context)

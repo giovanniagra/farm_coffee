@@ -24,7 +24,6 @@ class SignUpForm(UserCreationForm):
 
 
 class ProductForm(ModelForm):
-
     class Meta:
         model = products
         fields = '__all__'
