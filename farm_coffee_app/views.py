@@ -1,8 +1,12 @@
+from multiprocessing import context
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from .forms import ProductForm
+
 
 
 
@@ -20,12 +24,15 @@ def register_request(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("farm_coffee_app:home")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
+            username = form.cleaned_data.get('username')
+            messages.success(request, f"New account created: {username}")
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        else:
+            messages.error(request, "Account creation failed")
+
+        return redirect("farm_coffee_app:home")
     form = SignUpForm()
-    return render (request=request, template_name='register.html', context={"register_form":form})
+    return render(request, "register.html", {"form": form})
 
 def login_request(request):
     if request.method == "POST":
@@ -50,3 +57,15 @@ def logout_request(request):
     messages.info(request, "You have successfully logged out.")
     return redirect("farm_coffee_app:home")
 
+def user_details(request, user_id):
+    return HttpResponse("User details %s" % user_id)
+
+#product CRUD
+
+def create_product(request):   
+
+    form = ProductForm()
+
+
+    context = {'form': form}
+    return render(request, 'templates/product.html', context)

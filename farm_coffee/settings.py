@@ -39,7 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'farm_coffee_app',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
