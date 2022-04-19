@@ -12,5 +12,6 @@ urlpatterns = [
     path('logout', views.logout_request, name='logout'),
     # path('<int:user_id>/', views.user_details, name='detail'),
     path('create_product', views.create_product, name='create_product'),
-    path('update_product/<str:pk>/', views.update_product, name='update_product'),
+    path('update_product/<str:pk>', views.update_product, name='update_product'),
+    path("password_reset", views.password_reset_request, name="password_reset"),
 ]
