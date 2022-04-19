@@ -1,11 +1,11 @@
 from multiprocessing import context
+from pyexpat import model
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
-from .forms import ProductForm
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
@@ -13,6 +13,9 @@ from django.db.models.query_utils import Q
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
+from django.views import generic
+
+from .models import products
 
 
 
@@ -98,20 +101,39 @@ def password_reset_request(request):
 
 #Profile CRUD
 
-#product CRUD
-def create_product(request):   
-    form = ProductForm()
-    if request.method == "POST":
-        # print('Printing POST:', request.POST)
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/')
-    context = {'form': form}
-    return render(request, template_name='product.html', context=context)
+#Manage Order CRD
 
-def update_product(request, pk):
-    product = product.objects.get(id=pk)
-    form = ProductForm(instance=product)
-    context = {'form': form}
-    return render(request, template_name='product.html', context=context)
+# class create_order(generic.CreateView):
+# class read_order(generic.DetailView):
+# class read_order_list(generic.ListView):
+# class delete_order(generic.DeleteView):
+
+#Product CRUD
+
+# class create_product(generic.CreateView):
+
+# class read_product(generic.DetailView):
+#     model = products
+#     template_name = 'farm_coffee_app/read_product.html'
+
+# class read_product_list(generic.ListView):
+#     template_name = 'farm_coffee_app/.html'
+    
+# class update_product(generic.UpdateView):
+
+# class delete_product(generic.DeleteView):
+
+#Delivery CRUD
+# class create_delivery(generic.CreateView):
+# class read_delivery(generic.DetailView):
+# class read_delivery_list(generic.ListView):
+# class update_delivery(generic.UpdateView):
+# class delete_delivery(generic.DeleteView):
+
+#Review CRUD
+# class create_review(generic.CreateView):
+# class read_review(generic.DetailView):
+# class read_review_list(generic.ListView):
+# class update_review(generic.UpdateView):
+# class delete_review(generic.DeleteView):
+    
