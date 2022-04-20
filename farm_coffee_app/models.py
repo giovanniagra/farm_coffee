@@ -1,7 +1,9 @@
 from msilib.schema import AdminExecuteSequence
 from django.db import models
 from django.contrib.auth.models import User
-from phonenumber_field.modelfields import PhoneNumberField
+from django.core.validators import RegexValidator
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 # Create your models here.
@@ -12,7 +14,18 @@ class Profile(models.Model):
     city = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
     zip_code = models.CharField(max_length=255)
-    phone_number = PhoneNumberField(unique = True)
+    
+    phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
+    phone_number = models.CharField(validators = [phoneNumberRegex], max_length=16)
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
 
 class role(models.Model):
     ADMIN = 'Adm'

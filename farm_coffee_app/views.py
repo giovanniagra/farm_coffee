@@ -14,7 +14,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
-from .forms import ProductForm
+from .forms import ProductForm, UserForm, ProfileForm
 from .models import products
 
 
@@ -100,6 +100,11 @@ def password_reset_request(request):
     return render(request=request, template_name="password/password_reset.html", context={"password_reset_form":password_reset_form})
 
 #Profile CRUD
+
+def profilepage(request):
+    user_form = UserForm(instance=request.user)
+    profile_form = ProfileForm(instance=request.user.profile)
+    return render(request=request, template_name="profile_page.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form})
 
 #Manage Order CRD
 

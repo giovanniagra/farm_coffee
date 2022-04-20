@@ -50,12 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'farm_coffee_app',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'phonenumber_field',
+    'phonenumbers',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
