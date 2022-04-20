@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST" action="{% url 'farm_coffee_app:create_product' %}">
+    {% csrf_token %}
+
+    <label for="name">Product Name</label>
+    <input type="text" name="name" size="255">
+    
+    <label for="price">Product Price</label>
+    <input type="number" name="price">
+
+    <label for="availability">Product Availability</label>
+    <input type="checkbox" name="availability">
+
+    <input type="submit" value="Submission">
+    
+</form>
+
+{% endblock %}

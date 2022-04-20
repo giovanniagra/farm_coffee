@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout', views.logout_request, name='logout'),
     # path('<int:user_id>/', views.user_details, name='detail'),
     path("password_reset", views.password_reset_request, name="password_reset"),
+    path("create_product", views.create_product.as_view(), name='create_product')
 ]

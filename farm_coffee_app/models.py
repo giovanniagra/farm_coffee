@@ -71,6 +71,9 @@ class products(models.Model):
     price = models.IntegerField()
     availability = models.BooleanField()
 
+    def __str__(self):
+        return "{}".format(self.product_id)
+
 class toppings(models.Model):
     toppings_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)

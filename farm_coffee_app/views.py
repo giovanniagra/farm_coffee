@@ -2,7 +2,7 @@ from multiprocessing import context
 from pyexpat import model
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import SignUpForm
+from .forms import ProductForm, SignUpForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
@@ -14,7 +14,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
-
+from .forms import ProductForm
 from .models import products
 
 
@@ -110,7 +110,11 @@ def password_reset_request(request):
 
 #Product CRUD
 
-# class create_product(generic.CreateView):
+class create_product(generic.CreateView):
+    model = products
+    template_name = 'product/product_form.html'
+    form_class = ProductForm
+    success_url = '/'
 
 # class read_product(generic.DetailView):
 #     model = products
