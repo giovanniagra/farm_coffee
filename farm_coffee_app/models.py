@@ -1,3 +1,4 @@
+from distutils.command.upload import upload
 from msilib.schema import AdminExecuteSequence
 from django.db import models
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.db.models.signals import post_save
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
@@ -64,7 +65,7 @@ class order_status(models.Model):
 
 class total_order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    user_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
     order_status_fk_status_id = models.ForeignKey(order_status, on_delete=models.CASCADE)
     order_created_time = models.DateTimeField()
     time_of_delivery = models.DateTimeField()
@@ -82,6 +83,7 @@ class products(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
+    # image = models.ImageField(upload_to='static/farm_coffee_app/images')
     availability = models.BooleanField()
 
     def __str__(self):
@@ -95,7 +97,7 @@ class toppings(models.Model):
 
 class reviews(models.Model):
     reviews_id = models.AutoField(primary_key=True)
-    users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    users_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
     products_fk_products_id = models.ForeignKey(products, on_delete=models.CASCADE)
     rating = models.IntegerField()
     review_description = models.TextField()

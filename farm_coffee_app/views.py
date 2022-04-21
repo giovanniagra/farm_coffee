@@ -15,7 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import ProductForm, UserForm, ProfileForm
-from .models import products
+from .models import products, Profile
 
 
 
@@ -104,7 +104,8 @@ def password_reset_request(request):
 def profilepage(request):
     user_form = UserForm(instance=request.user)
     profile_form = ProfileForm(instance=request.user.profile)
-    return render(request=request, template_name="profile_page.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form})
+    details = Profile.objects.get(id = id)
+    return render(request=request, template_name="profile_page.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form, "details":details})
 
 #Manage Order CRD
 
@@ -121,9 +122,9 @@ class create_product(generic.CreateView):
     form_class = ProductForm
     success_url = '/'
 
-# class read_product(generic.DetailView):
-#     model = products
-#     template_name = 'farm_coffee_app/read_product.html'
+class read_product(generic.DetailView):
+    model = products
+    template_name = 'product/product_detail.html'
 
 # class read_product_list(generic.ListView):
 #     template_name = 'farm_coffee_app/.html'
