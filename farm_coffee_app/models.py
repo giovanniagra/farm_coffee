@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from distutils.command.upload import upload
 from msilib.schema import AdminExecuteSequence
 from django.db import models
@@ -83,7 +84,7 @@ class products(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
-    # image = models.ImageField(upload_to='static/farm_coffee_app/images')
+    image = models.ImageField(upload_to='farm_coffee_app\static\farm_coffee_app\images', default=NULL)
     availability = models.BooleanField()
 
     def __str__(self):
