@@ -88,7 +88,7 @@ class products(models.Model):
     price = models.IntegerField()
     image = models.ImageField(upload_to='images/', default='default.jpg')
     availability = models.BooleanField()
-    pub_date = models.DateTimeField(auto_now=True, blank=True)
+    pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
         return "{}".format(self.product_id)

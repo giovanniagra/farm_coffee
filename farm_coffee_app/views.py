@@ -18,6 +18,7 @@ from django.views import generic
 from .forms import ProductForm, UserForm, ProfileForm
 from .models import products, Profile
 import traceback
+from datetime import datetime
 
 
 
@@ -104,10 +105,23 @@ def password_reset_request(request):
 #Profile CRUD
 
 def profilepage(request):
-    user_form = UserForm(instance=request.user)
-    profile_form = ProfileForm(instance=request.user.profile)
-    details = Profile.objects.all()
-    return render(request=request, template_name="profile_page.html", context={"user":request.user, "user_form":user_form, "profile_form":profile_form, "details":details})
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, ('Your profile was successfully updated!'))
+            return redirect('farm_coffee_app:profilepage')
+        else:
+            messages.error(request, ('Please correct the errors below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'profile_page.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 #Manage Order CRD
 
@@ -129,11 +143,11 @@ class create_product(generic.CreateView):
         return super().form_valid(form)
 
 class read_product_list(generic.ListView):
-    template_name = 'farm_coffee_app/product_list.html'
+    template_name = 'product/read_product_list.html'
     context_object_name = 'view_product_list'
 
     def get_queryset(self):
-        return products.objects.filter(pub_date_lte=timezone.now().order_by('-pub-date'))
+        return products.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
 # class read_product(generic.DetailView):
 #     model = products

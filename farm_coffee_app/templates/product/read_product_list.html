@@ -3,8 +3,8 @@
 
 {% if view_product_list %}
 <ol>
-    {% if view_product_list %}
-        <li a href="{% url 'farm_coffee_app:read_product_list' view_product_list.name %}">{{ view_product_list.name }}</li>
+    {% for product_list in view_product_list %}
+        <li a href="{% url 'farm_coffee_app:read_product_list' %}">{{ view_product_list }}</a></li>
     {% endfor %}
 </ol>
 
