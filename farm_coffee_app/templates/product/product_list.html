@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if view_product_list %}
+<ol>
+    {% if view_product_list %}
+        <li a href="{% url 'farm_coffee_app:read_product_list' view_product_list.name %}">{{ view_product_list.name }}</li>
+    {% endfor %}
+</ol>
+
+{% else %}
+    <h2>The product list is currently empty. Please add products to view them in the list.</h2>
+    {% endif %}
+
+{% endblock %}

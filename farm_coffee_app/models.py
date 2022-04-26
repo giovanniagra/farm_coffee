@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils import timezone
+import datetime
 
 
 # Create your models here.
@@ -84,8 +86,9 @@ class products(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
-    image = models.ImageField(upload_to='farm_coffee_app\static\farm_coffee_app\images', default=NULL)
+    image = models.ImageField(upload_to='images/', default='default.jpg')
     availability = models.BooleanField()
+    pub_date = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
         return "{}".format(self.product_id)
