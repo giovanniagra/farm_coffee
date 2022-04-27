@@ -149,9 +149,9 @@ class read_product_list(generic.ListView):
     def get_queryset(self):
         return products.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
-# class read_product(generic.DetailView):
-#     model = products
-#     template_name = 'product/product_detail.html'
+class read_product_detail(generic.DetailView):
+    model = products
+    template_name = 'product/read_product_detail.html'
 
     
 # class update_product(generic.UpdateView):

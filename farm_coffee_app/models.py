@@ -91,7 +91,7 @@ class products(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
-        return "{}".format(self.product_id)
+       return f"{self.product_id}: {self.name}"
 
 class toppings(models.Model):
     toppings_id = models.AutoField(primary_key=True)

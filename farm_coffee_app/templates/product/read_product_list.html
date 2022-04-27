@@ -2,11 +2,11 @@
 {% block content %}
 
 {% if view_product_list %}
-<ol>
+<ul>
     {% for product_list in view_product_list %}
-        <li a href="{% url 'farm_coffee_app:read_product_list' %}">{{ view_product_list }}</a></li>
+        <li> <a href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">{{ product_list.name }}</a></li>
     {% endfor %}
-</ol>
+</ul>
 
 {% else %}
     <h2>The product list is currently empty. Please add products to view them in the list.</h2>
