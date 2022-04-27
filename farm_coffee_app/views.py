@@ -1,7 +1,7 @@
 from multiprocessing import context
 from pyexpat import model
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from pytz import timezone
 from .forms import ProductForm, SignUpForm
 from django.contrib.auth import login, authenticate, logout
@@ -16,7 +16,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import ProductForm, UserForm, ProfileForm
-from .models import Products, Profile
+from .models import Product, Profile
 import traceback
 from datetime import datetime
 
@@ -133,7 +133,7 @@ def profilepage(request):
 #Product CRUD
 
 class create_product(generic.CreateView):
-    model = Products
+    model = Product
     template_name = 'product/product_form.html'
     form_class = ProductForm
     success_url = '/'
@@ -147,16 +147,24 @@ class read_product_list(generic.ListView):
     context_object_name = 'view_product_list'
 
     def get_queryset(self):
-        return Products.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+        return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
 class read_product_detail(generic.DetailView):
-    model = Products
+    model = Product
     template_name = 'product/read_product_detail.html'
 
-    
-# class update_product(generic.UpdateView):
+class update_product(generic.UpdateView):
+    model = Product
+    fields = ['name', 'price', 'image', 'availability']
+    template_name= 'product/update_product.html'
+    success_url = '/details/{product_id}'
+    def get_object(self, queryset=None):
+        id = self.kwargs.get('pk')
+        return get_object_or_404(Product, product_id=id)
 
 # class delete_product(generic.DeleteView):
+#     model = Product
+#     success_url = '/'
 
 #Delivery CRUD
 # class create_delivery(generic.CreateView):

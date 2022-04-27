@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if products %}
+{% if product %}
     
-    <h2>{{ object.product_id }}</h2>
-    <h2>{{ products.name }}</h2>
+    <h2>{{ product.product_id }}</h2>
+    <h2>{{ product.name }}</h2>
+    <h2>{{ product.price }}</h2>
+    <h2>{{ product.image }}</h2>
+    <h2>{{ product.availability }}</h2>
     
     {% endif %}
 {% endblock %}

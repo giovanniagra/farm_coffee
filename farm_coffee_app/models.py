@@ -82,7 +82,7 @@ class Payment_Proof(models.Model):
     total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
-class Products(models.Model):
+class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
@@ -93,24 +93,24 @@ class Products(models.Model):
     def __str__(self):
        return f"{self.product_id}: {self.name}"
 
-class Toppings(models.Model):
+class Topping(models.Model):
     toppings_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
     availability = models.BooleanField()
 
-class Reviews(models.Model):
+class Review(models.Model):
     reviews_id = models.AutoField(primary_key=True)
     users_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    products_fk_products_id = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     rating = models.IntegerField()
     review_description = models.TextField()
 
 class Order_Product(models.Model):
     order_product_id = models.AutoField(primary_key=True)
     total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
-    products_fk_product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
-    toppings_fk_toppings_id = models.ForeignKey(Toppings , on_delete=models.CASCADE)
+    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    toppings_fk_toppings_id = models.ForeignKey(Topping , on_delete=models.CASCADE)
     order_product_quantity = models.IntegerField()
     order_topping_quantity = models.IntegerField()
 
