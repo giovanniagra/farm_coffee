@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='role',
+            name='Role',
             fields=[
                 ('role_id', models.AutoField(primary_key=True, serialize=False)),
                 ('role_name', models.CharField(choices=[('Adm', 'Admin'), ('Emp', 'Employee'), ('Cus', 'Customer')], max_length=10)),

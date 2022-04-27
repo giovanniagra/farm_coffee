@@ -16,7 +16,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import ProductForm, UserForm, ProfileForm
-from .models import products, Profile
+from .models import Products, Profile
 import traceback
 from datetime import datetime
 
@@ -133,7 +133,7 @@ def profilepage(request):
 #Product CRUD
 
 class create_product(generic.CreateView):
-    model = products
+    model = Products
     template_name = 'product/product_form.html'
     form_class = ProductForm
     success_url = '/'
@@ -147,10 +147,10 @@ class read_product_list(generic.ListView):
     context_object_name = 'view_product_list'
 
     def get_queryset(self):
-        return products.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+        return Products.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
 class read_product_detail(generic.DetailView):
-    model = products
+    model = Products
     template_name = 'product/read_product_detail.html'
 
     

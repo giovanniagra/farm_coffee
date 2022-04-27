@@ -31,7 +31,7 @@ class Profile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
-class role(models.Model):
+class Role(models.Model):
     ADMIN = 'Adm'
     EMPLOYEE = 'Emp'
     CUSTOMER = 'Cus'
@@ -46,13 +46,13 @@ class role(models.Model):
 # class users(models.Model):
 #     user_id = models.IntegerField(primary_key=True)
 #     address_fk_address_id = models.ForeignKey(address, on_delete=models.CASCADE)
-#     role_fk_role_id = models.ForeignKey(role, on_delete=models.CASCADE)
+#     role_fk_role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
 #     email = models.CharField(max_length=255)
 #     first_name = models.CharField(max_length=255)
 #     last_name = models.CharField(max_length=255)
 #     password = models.CharField(max_length=255)
 
-class order_status(models.Model):
+class Order_Status(models.Model):
     ORDERING = 'ORD'
     PREPARING = 'PRE'
     DELIVERING = 'DEL'
@@ -66,23 +66,23 @@ class order_status(models.Model):
     status_id = models.AutoField(primary_key=True)
     status_name = models.CharField(max_length=50, choices=STATUS_NAMES)
 
-class total_order(models.Model):
+class Total_Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    order_status_fk_status_id = models.ForeignKey(order_status, on_delete=models.CASCADE)
+    order_status_fk_status_id = models.ForeignKey(Order_Status, on_delete=models.CASCADE)
     order_created_time = models.DateTimeField()
     time_of_delivery = models.DateTimeField()
     delivery_completion = models.DateTimeField()
     payment_received = models.BooleanField()
     price = models.DecimalField(decimal_places=2, max_digits=10)
 
-class payment_proof(models.Model):
+class Payment_Proof(models.Model):
 
     users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_order_fk_order_id = models.ForeignKey(total_order, on_delete=models.CASCADE)
+    total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
-class products(models.Model):
+class Products(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
@@ -93,24 +93,24 @@ class products(models.Model):
     def __str__(self):
        return f"{self.product_id}: {self.name}"
 
-class toppings(models.Model):
+class Toppings(models.Model):
     toppings_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
     availability = models.BooleanField()
 
-class reviews(models.Model):
+class Reviews(models.Model):
     reviews_id = models.AutoField(primary_key=True)
     users_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    products_fk_products_id = models.ForeignKey(products, on_delete=models.CASCADE)
+    products_fk_products_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     rating = models.IntegerField()
     review_description = models.TextField()
 
-class order_product(models.Model):
+class Order_Product(models.Model):
     order_product_id = models.AutoField(primary_key=True)
-    total_order_fk_order_id = models.ForeignKey(total_order, on_delete=models.CASCADE)
-    products_fk_product_id = models.ForeignKey(products, on_delete=models.CASCADE)
-    toppings_fk_toppings_id = models.ForeignKey(toppings , on_delete=models.CASCADE)
+    total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
+    products_fk_product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
+    toppings_fk_toppings_id = models.ForeignKey(Toppings , on_delete=models.CASCADE)
     order_product_quantity = models.IntegerField()
     order_topping_quantity = models.IntegerField()
 
