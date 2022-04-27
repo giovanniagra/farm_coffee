@@ -16,10 +16,10 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import ProductForm, UserForm, ProfileForm
-from .models import Product, Profile
+from .models import Product, Profile, Total_Order, Order_Product
 import traceback
 from datetime import datetime
-
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -122,6 +122,14 @@ def profilepage(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+
+#Add to Cart Function
+# def add_to_cart(request, pk):
+#     item = get_object_or_404(Product, pk=pk)
+#     order_product, created = Order_Product.objects.get_or_create(
+#         product_fk_product_id=product_fk_product_id,
+#         user = request.user
+#     )
 
 #Manage Order CRD
 

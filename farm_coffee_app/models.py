@@ -69,7 +69,7 @@ class Order_Status(models.Model):
 class Total_Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    order_status_fk_status_id = models.ForeignKey(Order_Status, on_delete=models.CASCADE)
+    order_status_fk_status_id = models.OneToOneField(Order_Status, on_delete=models.CASCADE)
     order_created_time = models.DateTimeField()
     time_of_delivery = models.DateTimeField()
     delivery_completion = models.DateTimeField()
@@ -85,7 +85,7 @@ class Payment_Proof(models.Model):
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    price = models.IntegerField()
+    price = models.FloatField()
     image = models.ImageField(upload_to='images/', default='default.jpg')
     availability = models.BooleanField()
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
