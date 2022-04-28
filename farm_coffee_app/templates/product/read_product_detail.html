@@ -9,5 +9,7 @@
     <h2>{{ product.image }}</h2>
     <h2>{{ product.availability }}</h2>
     
+    <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
+    <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
     {% endif %}
 {% endblock %}

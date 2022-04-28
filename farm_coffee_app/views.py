@@ -1,5 +1,6 @@
 from multiprocessing import context
 from pyexpat import model
+from re import template
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from pytz import timezone
@@ -134,6 +135,8 @@ def profilepage(request):
 #Manage Order CRD
 
 # class create_order(generic.CreateView):
+#     model = Total_Order
+#     template_name = '/'
 # class read_order(generic.DetailView):
 # class read_order_list(generic.ListView):
 # class delete_order(generic.DeleteView):
@@ -170,11 +173,12 @@ class update_product(generic.UpdateView):
         id = self.kwargs.get('pk')
         return get_object_or_404(Product, product_id=id)
 
-# class delete_product(generic.DeleteView):
-#     model = Product
-#     success_url = '/'
+class delete_product(generic.DeleteView):
+    model = Product
+    template_name = 'product/confirm_delete_product.html'
+    success_url = '/'
 
-#Delivery CRUD
+#Topping CRUD
 # class create_delivery(generic.CreateView):
 # class read_delivery(generic.DetailView):
 # class read_delivery_list(generic.ListView):
