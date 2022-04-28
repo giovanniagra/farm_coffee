@@ -16,8 +16,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
-from .forms import ProductForm, UserForm, ProfileForm
-from .models import Product, Profile, Total_Order, Order_Product
+from .forms import *
+from .models import Product, Profile, Review, Total_Order, Order_Product
 import traceback
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -124,19 +124,71 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
-#Add to Cart Function
-# def add_to_cart(request, pk):
-#     item = get_object_or_404(Product, pk=pk)
-#     order_product, created = Order_Product.objects.get_or_create(
-#         product_fk_product_id=product_fk_product_id,
-#         user = request.user
-#     )
+# Add to Cart Function
+def add_to_cart(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    order_product, created = Order_Product.objects.get_or_create(
+        product_fk_product_id=product_fk_product_id,
+        user = request.user,
+        ordered = False
+    )
+    ordering = Total_Order.objects.filter(user=request.user, ordered=False)
+
+    if ordering.exists():
+        order = ordering[0]
+
+        if order.items.filter(product__pk = product.pk).exists():
+            order_product.order_product_quantity += 1
+            order_product.save()
+            messages.info(request, "Added Product")
+            return redirect("core:product", pk = pk)
+        else:
+            Total_Order.order_product_fk_order_product_id.add(order_product)
+            messages.info(request, "Product added to your cart")
+            return redirect("core:product", pk = pk)
+    else:
+        order_created_time = timezone.now()
+        order = Total_Order.objects.create(user=request.user, order_created_time=order_created_time)
+        Order_Product.order_product_quantity.add(order_item)
+        messages.info(request, "Product add to your cart")
+        return redirect ("core:product", pk = pk)
+
+# Remove From Cart Function
+def remove_from_cart(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    ordering = Total_Order.objects.filter(
+        user=request.user,
+        ordered=False
+    )
+    if ordering.exists():
+        order = ordering_qs[0]
+        if order.items.filter(product__pk = product.pk).exists():
+            order_product = Order_Product.objects.filter(
+                product_fk_product_id = product_fk_product_id,
+                user = request.user,
+                ordered = False
+            )[0]
+            order_product.delete()
+            messages.info(request, "Product \""+order_product.product_fk_product_id.name+"\" removed from your cart")
+            return redirect("core:product")
+        else:
+            messages.info(request, "This product is not in your cart")
+            return redirect("core:product", pk=pk)
+    else:
+        messages.info(request, "You do not have an Order")
+        return redirect("core:product", pk = pk)
 
 #Manage Order CRD
 
 # class create_order(generic.CreateView):
 #     model = Total_Order
-#     template_name = '/'
+#     template_name = 'order/total_order_form.html'
+#     form_class= TotalOrderForm
+
+#     def form_valid(self, form):
+#         print("super", super().form_valid(form),)
+#         return super().form_valid(form)
+
 # class read_order(generic.DetailView):
 # class read_order_list(generic.ListView):
 # class delete_order(generic.DeleteView):
@@ -147,7 +199,7 @@ class create_product(generic.CreateView):
     model = Product
     template_name = 'product/product_form.html'
     form_class = ProductForm
-    success_url = '/'
+    success_url = '/' 
     
     def form_valid(self, form):
         print("super", super().form_valid(form),)
@@ -179,14 +231,20 @@ class delete_product(generic.DeleteView):
     success_url = '/'
 
 #Topping CRUD
-# class create_delivery(generic.CreateView):
-# class read_delivery(generic.DetailView):
-# class read_delivery_list(generic.ListView):
-# class update_delivery(generic.UpdateView):
-# class delete_delivery(generic.DeleteView):
+# class create_topping(generic.CreateView):
+# class read_topping(generic.DetailView):
+# class read_topping_list(generic.ListView):
+# class update_topping(generic.UpdateView):
+# class delete_topping(generic.DeleteView):
 
 #Review CRUD
-# class create_review(generic.CreateView):
+class create_review(generic.CreateView):
+    model = Review
+    template_name = 'review/review_form.html'
+    form_class = ReviewForm
+    success_url = '/'
+    
+
 # class read_review(generic.DetailView):
 # class read_review_list(generic.ListView):
 # class update_review(generic.UpdateView):
