@@ -1,8 +1,11 @@
+from itertools import chain
 from multiprocessing import context
 from pyexpat import model
 from re import template
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
+from numpy import product
 from pytz import timezone
 from .forms import ProductForm, SignUpForm
 from django.contrib.auth import login, authenticate, logout
@@ -21,6 +24,7 @@ from .models import Product, Profile, Review, Total_Order, Order_Product
 import traceback
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -125,58 +129,58 @@ def profilepage(request):
     })
 
 # Add to Cart Function
-def add_to_cart(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    order_product, created = Order_Product.objects.get_or_create(
-        product_fk_product_id=product_fk_product_id,
-        user = request.user,
-        ordered = False
-    )
-    ordering = Total_Order.objects.filter(user=request.user, ordered=False)
+# def add_to_cart(request, pk):
+#     product = get_object_or_404(Product, pk=pk)
+#     order_product, created = Order_Product.objects.get_or_create(
+#         product_fk_product_id = product_fk_product_id,
+#         user = request.user,
+#         ordered = False
+#     )
+#     ordering = Total_Order.objects.filter(user=request.user, ordered=False)
 
-    if ordering.exists():
-        order = ordering[0]
+#     if ordering.exists():
+#         order = ordering[0]
 
-        if order.items.filter(product__pk = product.pk).exists():
-            order_product.order_product_quantity += 1
-            order_product.save()
-            messages.info(request, "Added Product")
-            return redirect("core:product", pk = pk)
-        else:
-            Total_Order.order_product_fk_order_product_id.add(order_product)
-            messages.info(request, "Product added to your cart")
-            return redirect("core:product", pk = pk)
-    else:
-        order_created_time = timezone.now()
-        order = Total_Order.objects.create(user=request.user, order_created_time=order_created_time)
-        Order_Product.order_product_quantity.add(order_item)
-        messages.info(request, "Product add to your cart")
-        return redirect ("core:product", pk = pk)
+#         if order.items.filter(product__pk = product.pk).exists():
+#             order_product.order_product_quantity += 1
+#             order_product.save()
+#             messages.info(request, "Added Product")
+#             return redirect("core:product", pk = pk)
+#         else:
+#             Total_Order.order_product_fk_order_product_id.add(order_product)
+#             messages.info(request, "Product added to your cart")
+#             return redirect("core:product", pk = pk)
+#     else:
+#         order_created_time = timezone.now()
+#         order = Total_Order.objects.create(user=request.user, order_created_time=order_created_time)
+#         Order_Product.order_product_quantity.add(order_item)
+#         messages.info(request, "Product add to your cart")
+#         return redirect ("core:product", pk = pk)
 
 # Remove From Cart Function
-def remove_from_cart(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    ordering = Total_Order.objects.filter(
-        user=request.user,
-        ordered=False
-    )
-    if ordering.exists():
-        order = ordering_qs[0]
-        if order.items.filter(product__pk = product.pk).exists():
-            order_product = Order_Product.objects.filter(
-                product_fk_product_id = product_fk_product_id,
-                user = request.user,
-                ordered = False
-            )[0]
-            order_product.delete()
-            messages.info(request, "Product \""+order_product.product_fk_product_id.name+"\" removed from your cart")
-            return redirect("core:product")
-        else:
-            messages.info(request, "This product is not in your cart")
-            return redirect("core:product", pk=pk)
-    else:
-        messages.info(request, "You do not have an Order")
-        return redirect("core:product", pk = pk)
+# def remove_from_cart(request, pk):
+#     product = get_object_or_404(Product, pk=pk)
+#     ordering = Total_Order.objects.filter(
+#         user=request.user,
+#         ordered=False
+#     )
+#     if ordering.exists():
+#         order = ordering[0]
+#         if order.items.filter(product__pk = product.pk).exists():
+#             order_product = Order_Product.objects.filter(
+#                 product_fk_product_id = product_fk_product_id,
+#                 user = request.user,
+#                 ordered = False
+#             )[0]
+#             order_product.delete()
+#             messages.info(request, "Product \""+order_product.product_fk_product_id.name+"\" removed from your cart")
+#             return redirect("core:product")
+#         else:
+#             messages.info(request, "This product is not in your cart")
+#             return redirect("core:product", pk=pk)
+#     else:
+#         messages.info(request, "You do not have an Order")
+#         return redirect("core:product", pk = pk)
 
 #Manage Order CRD
 
@@ -199,7 +203,7 @@ class create_product(generic.CreateView):
     model = Product
     template_name = 'product/product_form.html'
     form_class = ProductForm
-    success_url = '/' 
+    success_url = '/list' 
     
     def form_valid(self, form):
         print("super", super().form_valid(form),)
@@ -211,10 +215,22 @@ class read_product_list(generic.ListView):
 
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+        
 
 class read_product_detail(generic.DetailView):
     model = Product
     template_name = 'product/read_product_detail.html'
+    
+    def get_queryset(self):
+        return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+
+    # def get_context_data(self):
+    #     products = Product.objects.get(product_id=self.kwargs.get('pk'))
+
+    #     reviews = Review.objects.all().filter(product_fk_product_id=self.kwargs.get('pk'))
+    #     return {"products":products, "reviews":reviews}
+
+
 
 class update_product(generic.UpdateView):
     model = Product
@@ -228,7 +244,7 @@ class update_product(generic.UpdateView):
 class delete_product(generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
-    success_url = '/'
+    success_url = '/list'
 
 #Topping CRUD
 # class create_topping(generic.CreateView):
@@ -237,16 +253,52 @@ class delete_product(generic.DeleteView):
 # class update_topping(generic.UpdateView):
 # class delete_topping(generic.DeleteView):
 
-#Review CRUD
-class create_review(generic.CreateView):
-    model = Review
-    template_name = 'review/review_form.html'
-    form_class = ReviewForm
-    success_url = '/'
-    
+#Review CRUD --- rewrite it using function based
 
-# class read_review(generic.DetailView):
-# class read_review_list(generic.ListView):
+
+# class create_review(generic.CreateView):
+#     model = Review
+#     template_name = 'review/review_form.html'
+#     form_class = ReviewForm
+#     success_url = '/details/5'
+#     def form_valid(self, form):
+#         product_fk_product_id=form.cleaned_data['product_fk_product_id']
+#         rating= form.cleaned_data['rating']
+#         review_description =form.cleaned_data['review_description']
+#         try:
+#             review = Review(
+#                 users_fk_user_id=self.request.user,
+#                 product_fk_product_id=Product.objects.get(product_id=product_fk_product_id),
+#                 rating=rating,
+#                 review_description= review_description)
+#             review.save()
+#             messages.success(self.request, "review has been created")
+#         except:
+#             messages.success(self.request, "review was not created")
+        
+#         return super().form_valid(form)
+
+def create_review(request):
+    product_fk_product_id=request.POST['product_fk_product_id']
+
+    review=Review(
+        users_fk_user_id=request.user,
+        product_fk_product_id=Product.objects.get(product_id=product_fk_product_id),
+        rating=request.POST['rating'],
+        review_description= request.POST['review_description'])
+    review.save()
+
+    messages.success(request, "review has been created")
+    return HttpResponseRedirect(reverse('farm_coffee_app:read_product_list'))
+     
+
+class read_review(generic.ListView):
+    template_name = 'product/read_product_detail.html'
+    context_object_name = 'view_reviews'
+
+    def get_queryset(self):
+        return Review.objects.all()
+
 # class update_review(generic.UpdateView):
 # class delete_review(generic.DeleteView):
     

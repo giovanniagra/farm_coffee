@@ -80,17 +80,17 @@ class Product(models.Model):
        return f"{self.product_id}: {self.name}"
 
     def get_absolute_url(self):
-        return reverse("core:product", kwargs={
+        return reverse("farm_coffee_app:read_product_detail", kwargs={
             "pk" : self.pk
         })
 
     def get_add_to_car_url(self):
-        return reverse("core:add-to-cart", kwargs={
+        return reverse("farm_coffee_app:add_to_cart", kwargs={
             "pk" : self.pk
         })
 
     def get_remove_from_cart_url(self) :
-        return reverse("core:remove-from-cart", kwargs={
+        return reverse("farm_coffee_app:remove_from_cart", kwargs={
             "pk" : self.pk
         })
 
@@ -102,13 +102,14 @@ class Topping(models.Model):
 
 class Review(models.Model):
     reviews_id = models.AutoField(primary_key=True)
-    users_fk_user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
     rating = models.FloatField()
     review_description = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
-        return f"{self.reviews_id}"
+        return f"{self.reviews_id} {self.review_description}"
 
 class Order_Product(models.Model):
     order_product_id = models.AutoField(primary_key=True)

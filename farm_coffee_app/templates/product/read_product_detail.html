@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{{context}}
 {% if product %}
     
     <h2>{{ product.product_id }}</h2>
@@ -8,8 +9,38 @@
     <h2>{{ product.price }}</h2>
     <h2>{{ product.image }}</h2>
     <h2>{{ product.availability }}</h2>
-    
+
     <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
     <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
-    {% endif %}
+    
+
+    <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
+        {% csrf_token %}
+        <input hidden name='path' value="{{ request.path }}" />
+            <input hidden type="number" name="product_fk_product_id" value={{product.product_id}}>
+        <label for="rating">Rating</label>
+             <input type="number" min="0" max="5" name="rating">
+    
+        <label for="review_description">Review</label>
+            <input type="text" name="review_description">
+    
+        <input type="submit" value="Send">
+        
+    </form>
+    
+{% endif %}
+
+    {% if product.review.all %}
+        <ul>
+            {% for view in product.review.all %}
+                <li> {{ view.users_fk_user_id }}</li>
+                <li> {{ view.rating }}</li>
+                <li> {{ view.review_description }}</li>
+                <li> {{ view.pub_date }}</li>
+    {% endfor %}
+        </ul>
+            {% else %}
+                <h2>The are currently no reviews available.</h2>
+            {% endif %}
+    
 {% endblock %}
