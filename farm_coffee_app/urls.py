@@ -15,9 +15,7 @@ urlpatterns = [
     path("password_reset", views.password_reset_request, name="password_reset"),
 
     # urls for adding-to-cart
-    # path('add-to-cart/<pk>/', views.add_to_cart, name='add_to_cart'),
-    # path('remove-from-cart/<pk>/', views.remove_from_cart, name='remove_from_cart'),
-
+    
     # urls for product
     path('create_product', views.create_product.as_view(), name='create_product'),
     path('list/', views.read_product_list.as_view(), name='read_product_list'),
@@ -27,7 +25,14 @@ urlpatterns = [
 
     # urls for order
     # path('create_order', views.create_order.as_view(), name='total_order_form')
+
     # urls for review
     path('review/', views.create_review, name='create_review'),
     path('read_review/', views.read_review.as_view(), name='read_product_detail'),
+    path('update_review/<int:pk>/', views.update_review.as_view(), name='update_review'),
+    path('delete_review/<int:pk>/', views.delete_review.as_view(), name='delete_review'),
+
+    path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+
+
 ]

@@ -84,21 +84,15 @@ class Product(models.Model):
             "pk" : self.pk
         })
 
-    def get_add_to_car_url(self):
-        return reverse("farm_coffee_app:add_to_cart", kwargs={
-            "pk" : self.pk
-        })
-
-    def get_remove_from_cart_url(self) :
-        return reverse("farm_coffee_app:remove_from_cart", kwargs={
-            "pk" : self.pk
-        })
-
 class Topping(models.Model):
     toppings_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     price = models.FloatField()
+    products = models.ManyToManyField(Product, related_name='toppings')
     availability = models.BooleanField()
+
+    def __str__(self):
+        return f"{self.toppings_id} {self.name}"
 
 class Review(models.Model):
     reviews_id = models.AutoField(primary_key=True)
@@ -111,23 +105,22 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.reviews_id} {self.review_description}"
 
-class Order_Product(models.Model):
-    order_product_id = models.AutoField(primary_key=True)
+class Cart(models.Model):
+    cart_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    toppings_fk_toppings_id = models.ForeignKey(Topping , on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product)
     ordered = models.BooleanField(default=False)
-    order_product_quantity = models.IntegerField(default=1)
+    cart_quantity = models.IntegerField(default=1)
     order_topping_quantity = models.IntegerField()
 
     def __str__(self):
-        return f"{self.order_product_quantity} of {self.product_fk_product_id.Product.name}"
+        return f"{self.cart_quantity}"
 
 class Total_Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # order_status_fk_status_id = models.OneToOneField(Order_Status, on_delete=models.CASCADE)
-    order_product_fk_order_product_id = models.ManyToManyField(Order_Product)
+    cart_fk_cart_id = models.ManyToManyField(Cart)
     order_created_time = models.DateTimeField()
     ordered = models.BooleanField(default=False)
     time_of_delivery = models.DateTimeField()

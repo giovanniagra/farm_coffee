@@ -2,6 +2,7 @@ from itertools import chain
 from multiprocessing import context
 from pyexpat import model
 from re import template
+from urllib.request import ProxyDigestAuthHandler
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -20,7 +21,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import *
-from .models import Product, Profile, Review, Total_Order, Order_Product
+from .models import Product, Profile, Review, Total_Order, Cart
 import traceback
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -60,6 +61,8 @@ def login_request(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
+            
+
             if user is not None:
                 login(request, user)
                 messages.info(request, f"You are now logged in as {username}.")
@@ -129,60 +132,19 @@ def profilepage(request):
     })
 
 # Add to Cart Function
-# def add_to_cart(request, pk):
-#     product = get_object_or_404(Product, pk=pk)
-#     order_product, created = Order_Product.objects.get_or_create(
-#         product_fk_product_id = product_fk_product_id,
-#         user = request.user,
-#         ordered = False
-#     )
-#     ordering = Total_Order.objects.filter(user=request.user, ordered=False)
 
-#     if ordering.exists():
-#         order = ordering[0]
+def add_to_cart(request):
+    user_cart = len(Cart.objects.filter(user=request.user))
+    print(user_cart, request.POST)
+    # if user_cart:
+        # add product to user cart
 
-#         if order.items.filter(product__pk = product.pk).exists():
-#             order_product.order_product_quantity += 1
-#             order_product.save()
-#             messages.info(request, "Added Product")
-#             return redirect("core:product", pk = pk)
-#         else:
-#             Total_Order.order_product_fk_order_product_id.add(order_product)
-#             messages.info(request, "Product added to your cart")
-#             return redirect("core:product", pk = pk)
-#     else:
-#         order_created_time = timezone.now()
-#         order = Total_Order.objects.create(user=request.user, order_created_time=order_created_time)
-#         Order_Product.order_product_quantity.add(order_item)
-#         messages.info(request, "Product add to your cart")
-#         return redirect ("core:product", pk = pk)
+        # return to the same page
+    # create a new cart and add product
 
-# Remove From Cart Function
-# def remove_from_cart(request, pk):
-#     product = get_object_or_404(Product, pk=pk)
-#     ordering = Total_Order.objects.filter(
-#         user=request.user,
-#         ordered=False
-#     )
-#     if ordering.exists():
-#         order = ordering[0]
-#         if order.items.filter(product__pk = product.pk).exists():
-#             order_product = Order_Product.objects.filter(
-#                 product_fk_product_id = product_fk_product_id,
-#                 user = request.user,
-#                 ordered = False
-#             )[0]
-#             order_product.delete()
-#             messages.info(request, "Product \""+order_product.product_fk_product_id.name+"\" removed from your cart")
-#             return redirect("core:product")
-#         else:
-#             messages.info(request, "This product is not in your cart")
-#             return redirect("core:product", pk=pk)
-#     else:
-#         messages.info(request, "You do not have an Order")
-#         return redirect("core:product", pk = pk)
 
-#Manage Order CRD
+
+    
 
 # class create_order(generic.CreateView):
 #     model = Total_Order
@@ -299,6 +261,18 @@ class read_review(generic.ListView):
     def get_queryset(self):
         return Review.objects.all()
 
-# class update_review(generic.UpdateView):
-# class delete_review(generic.DeleteView):
+class update_review(generic.UpdateView):
+    model = Review
+    fields = ['rating', 'review_description']
+    template_name= 'review/update_review.html'
+    success_url = '/list'
+    # success_url = '/details/{product_fk_product_id}'
+    # def get_object(self, queryset=None):
+    #     id = self.kwargs.get('pk')
+    #     return get_object_or_404(Review, product_fk_product_id=id)
+
+class delete_review(generic.DeleteView):
+    model = Review
+    template_name = 'review/confirm_delete_review.html'
+    success_url = '/list'
     

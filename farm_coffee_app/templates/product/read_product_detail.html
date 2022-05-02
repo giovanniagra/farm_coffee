@@ -9,17 +9,28 @@
     <h2>{{ product.price }}</h2>
     <h2>{{ product.image }}</h2>
     <h2>{{ product.availability }}</h2>
+    <h2>{{ product.toppings.all }}</h2>
 
-    <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
+    <form method="POST" action="{% url 'farm_coffee_app:add_to_cart' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="product" value="{{ product.product_id }}"/>
+    <input type="checkbox" name="toppings" id="Boba" value="Boba"/><label for="">Boba</label><br>
+    <input type="checkbox" name="toppings" id="Jelly" value="Jelly"/><label for="">Jelly</label><br>
+    <input type="checkbox" name="toppings" id="Coffee Shot" value="Coffee Shot"/><label for="">Coffee Shot</label><br>
+    <input type="checkbox" name="toppings" id="None" value="None"/><label for="">None</label><br>
+    <button>Submit</button>
+</form>
     <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
+    <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
     
-
+    
     <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
         {% csrf_token %}
         <input hidden name='path' value="{{ request.path }}" />
             <input hidden type="number" name="product_fk_product_id" value={{product.product_id}}>
         <label for="rating">Rating</label>
-             <input type="number" min="0" max="5" name="rating">
+             <input type="number" min="0" max="5" name="rating" class="range-field">
     
         <label for="review_description">Review</label>
             <input type="text" name="review_description">
@@ -37,6 +48,12 @@
                 <li> {{ view.rating }}</li>
                 <li> {{ view.review_description }}</li>
                 <li> {{ view.pub_date }}</li>
+
+            {% if user.pk == view.users_fk_user_id.pk %}
+            <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a>
+            <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}">Delete</a>   
+            {% endif %}
+                
     {% endfor %}
         </ul>
             {% else %}
