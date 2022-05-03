@@ -34,7 +34,8 @@ from django.contrib.auth.decorators import login_required
 
 # Sign-Up, Log-In, and Password-reset
 def home(request):
-    return render(request, 'home.html', {})
+    products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')[0:4]
+    return render(request, 'home.html', {"products": products})
 
 def menu(request):
     return render(request, 'menu.html', {})

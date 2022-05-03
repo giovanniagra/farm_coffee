@@ -9,7 +9,11 @@
     <h2>{{ product.price }}</h2>
     <h2>{{ product.image }}</h2>
     <h2>{{ product.availability }}</h2>
-    <h2>{{ product.toppings.all }}</h2>
+    
+    <h2>{% for topping in product.toppings.all %}
+            <h2>Added Topping: {{ topping.name }}</h2>
+        {% endfor %}
+    </h2>
 
     <form method="POST" action="{% url 'farm_coffee_app:add_to_cart' %}">
         {% csrf_token %}
@@ -61,7 +65,7 @@
                 <h2>The are currently no reviews available.</h2>
             {% endif %}
 
-            
+
     <script>
         function checkbox(){
             let selectedOptions = document.querySelectorAll(".options")
