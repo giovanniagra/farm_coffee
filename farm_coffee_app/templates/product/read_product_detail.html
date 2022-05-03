@@ -13,20 +13,21 @@
 
     <form method="POST" action="{% url 'farm_coffee_app:add_to_cart' %}">
         {% csrf_token %}
-
         <input type="hidden" name="product" value="{{ product.product_id }}"/>
-    <input type="checkbox" name="toppings" id="Boba" value="Boba"/><label for="">Boba</label><br>
-    <input type="checkbox" name="toppings" id="Jelly" value="Jelly"/><label for="">Jelly</label><br>
-    <input type="checkbox" name="toppings" id="Coffee Shot" value="Coffee Shot"/><label for="">Coffee Shot</label><br>
-    <input type="checkbox" name="toppings" id="None" value="None"/><label for="">None</label><br>
+        <input class="options" type="checkbox" name="toppings" id="Boba" value="Boba"/><label for="">Boba</label><br>
+        <input class="options" type="checkbox" name="toppings" id="Whipped_Cream" value="Whipped Cream"/><label for="">Whipped Cream</label><br>
+        <input class="options" type="checkbox" name="toppings" id="Coffee_Shot" value="Coffee Shot"/><label for="">Coffee Shot</label><br>
+        <input type="checkbox" name="toppings" id="None" value="None" onClick="checkbox()"/><label for="">None</label><br>
     <button>Submit</button>
+
 </form>
     <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
     <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
-    
+  
     
     <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
         {% csrf_token %}
+      
         <input hidden name='path' value="{{ request.path }}" />
             <input hidden type="number" name="product_fk_product_id" value={{product.product_id}}>
         <label for="rating">Rating</label>
@@ -38,7 +39,7 @@
         <input type="submit" value="Send">
         
     </form>
-    
+   
 {% endif %}
 
     {% if product.review.all %}
@@ -59,5 +60,20 @@
             {% else %}
                 <h2>The are currently no reviews available.</h2>
             {% endif %}
-    
+
+            
+    <script>
+        function checkbox(){
+            let selectedOptions = document.querySelectorAll(".options")
+            if(document.getElementById('None').checked==true){
+                selectedOptions.forEach(element => {
+                    element.disabled=true
+                    element.checked=false
+                });
+            }else{
+                selectedOptions.forEach(element => {element.disabled=false});
+            }
+        }
+    </script> 
+        
 {% endblock %}
