@@ -34,7 +34,8 @@
   <div class="row">
     {% for product in products %}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
-      <div class="card shadow">
+      <a href="{% url 'farm_coffee_app:read_product_detail' product.product_id %}" style="text-decoration: none;">
+        <div class="card shadow">
           <img src="https://drive.google.com/uc?export=view&id=1aj_vT5zjJlkdEQ_VcCsdnvpVBi-Fjwyb" class="card-img-top" alt="...">
           <div class="card-body">
               <h2 class="card-title">{{ product.name }}</h2>
@@ -54,6 +55,7 @@
               </div>
           </div>
       </div>
+      </a>
   </div>
     {% endfor %}
   
@@ -64,3 +66,7 @@
 
  
 {% endblock %}
+
+ 
+
+

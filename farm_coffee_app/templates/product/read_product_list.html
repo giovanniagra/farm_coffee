@@ -2,14 +2,41 @@
 {% block content %}
 
 {% if view_product_list %}
-<ul>
+<div class="container">
+  <div class="row">
     {% for product_list in view_product_list %}
-        <li> <a href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">{{ product_list.name }}</a></li>       
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
+            <a href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}" style="text-decoration: none;">
+            <div class="card shadow">
+                <img src="https://drive.google.com/uc?export=view&id=1aj_vT5zjJlkdEQ_VcCsdnvpVBi-Fjwyb" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h2 class="card-title">{{ product_list.name }}</h2>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+                <div class="card-body card-p">
+                    <div class="row">
+                        <div class="col col-xs-4 ">
+                            <i class="far fa-comments"></i> 456
+                        </div>
+                        <div class="col col-xs-4 ">
+                            <i class="far fa-heart"></i> 2.4k
+                        </div>
+                        <div class="col col-xs-4">
+                            <i class="fas fa-share"></i> 99
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        </div>
+    
     {% endfor %}
-</ul>
-
+  
+      
+  </div>
+</div>
 {% else %}
     <h2>The product list is currently empty. Please add product to view them in the list.</h2>
-    {% endif %}
+{% endif %}
 
 {% endblock %}

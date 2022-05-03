@@ -72,11 +72,14 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               {% if user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Menu</a>
+                <a class="nav-link active" aria-current="page" href="/list">Menu</a>
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link bi bi-person" style="font-size: 1.5rem" href="/profile">{{user.username}}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">History</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link bi bi-bell" style="font-size: 1.5rem" href="#"></a>

@@ -47,3 +47,7 @@ body {
     color: var(--color-two);
     margin-right: 8px;
 }
+
+p.card-text{
+    color: #222;
+}
