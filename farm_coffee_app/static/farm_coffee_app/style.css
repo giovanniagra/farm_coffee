@@ -4,6 +4,7 @@
     --color-three: #70380f;
 }
 
+
 body {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
@@ -50,4 +51,74 @@ body {
 
 p.card-text{
     color: #222;
+}
+
+/* Cart */
+
+.cart-container {
+    overflow-x: auto;
+}
+
+.cart-container table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    white-space: nowrap;
+}
+
+.cart-container table thead {
+    font-weight: 700;
+}
+
+.cart-container table thead td {
+    background-color:#228b22;
+    color: white;
+    border: none;
+    padding: 6px 0;
+}
+
+.cart-container table td, thead {
+    border: 1px solid black;
+    text-align: center
+}
+
+.cart-container table td:nth-child(1) {
+    width: 100px;
+}
+
+.cart-container table td:nth-child(2), 
+.cart-container table td:nth-child(3){
+    width: 200px;
+}
+
+.cart-container table td:nth-child(4),
+.cart-container table td:nth-child(5),
+.cart-container table td:nth-child(6) {
+    width: 170px;
+}
+
+.cart-container table tbody img{
+    width: 100px;
+    height: 80 px;
+    object-fit: cover;
+}
+
+.cart-bottom .total h5{
+    background-color: #228b22;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    font-weight: 700;
+}
+
+.cart-bottom .total>div {
+    border: 1px solid black;
+}
+
+.cart-bottom .total div>div{
+    padding: 0 12px;
+}
+
+.cart-bottom .total h6{
+    color: black;
 }

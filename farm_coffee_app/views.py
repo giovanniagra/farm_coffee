@@ -24,19 +24,20 @@ from .forms import *
 from .models import Product, Profile, Review, Total_Order, Cart
 import traceback
 from datetime import datetime
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-
-
 
 
 
 # Create your views here.
 
 # Sign-Up, Log-In, and Password-reset
+@login_required(login_url='login')
 def home(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')[0:4]
     return render(request, 'home.html', {"products": products})
 
+@login_required(login_url='login')
 def menu(request):
     return render(request, 'menu.html', {})
 
@@ -80,6 +81,7 @@ def logout_request(request):
     messages.info(request, "You have successfully logged out.")
     return redirect("farm_coffee_app:home")
 
+@login_required(login_url='login')
 def user_details(request, user_id):
     return HttpResponse("User details %s" % user_id)
 
@@ -112,7 +114,7 @@ def password_reset_request(request):
     return render(request=request, template_name="password/password_reset.html", context={"password_reset_form":password_reset_form})
 
 #Profile CRUD
-
+@login_required(login_url='login')
 def profilepage(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
@@ -161,8 +163,7 @@ def add_to_cart(request):
 # class delete_order(generic.DeleteView):
 
 #Product CRUD
-
-class create_product(generic.CreateView):
+class create_product(LoginRequiredMixin, generic.CreateView):
     model = Product
     template_name = 'product/product_form.html'
     form_class = ProductForm
@@ -172,7 +173,7 @@ class create_product(generic.CreateView):
         print("super", super().form_valid(form),)
         return super().form_valid(form)
 
-class read_product_list(generic.ListView):
+class read_product_list(LoginRequiredMixin, generic.ListView):
     template_name = 'product/read_product_list.html'
     context_object_name = 'view_product_list'
 
@@ -180,7 +181,7 @@ class read_product_list(generic.ListView):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
         
 
-class read_product_detail(generic.DetailView):
+class read_product_detail(LoginRequiredMixin, generic.DetailView):
     model = Product
     template_name = 'product/read_product_detail.html'
     
@@ -195,7 +196,7 @@ class read_product_detail(generic.DetailView):
 
 
 
-class update_product(generic.UpdateView):
+class update_product(LoginRequiredMixin, generic.UpdateView):
     model = Product
     fields = ['name', 'price', 'image', 'availability']
     template_name= 'product/update_product.html'
@@ -204,7 +205,7 @@ class update_product(generic.UpdateView):
         id = self.kwargs.get('pk')
         return get_object_or_404(Product, product_id=id)
 
-class delete_product(generic.DeleteView):
+class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
     success_url = '/list'
@@ -241,6 +242,7 @@ class delete_product(generic.DeleteView):
         
 #         return super().form_valid(form)
 
+@login_required(login_url='login')
 def create_review(request):
     product_fk_product_id=request.POST['product_fk_product_id']
 
@@ -255,14 +257,14 @@ def create_review(request):
     return HttpResponseRedirect(reverse('farm_coffee_app:read_product_list'))
      
 
-class read_review(generic.ListView):
+class read_review(LoginRequiredMixin, generic.ListView):
     template_name = 'product/read_product_detail.html'
     context_object_name = 'view_reviews'
 
     def get_queryset(self):
         return Review.objects.all()
 
-class update_review(generic.UpdateView):
+class update_review(LoginRequiredMixin, generic.UpdateView):
     model = Review
     fields = ['rating', 'review_description']
     template_name= 'review/update_review.html'
@@ -272,8 +274,17 @@ class update_review(generic.UpdateView):
     #     id = self.kwargs.get('pk')
     #     return get_object_or_404(Review, product_fk_product_id=id)
 
-class delete_review(generic.DeleteView):
+class delete_review(LoginRequiredMixin, generic.DeleteView):
     model = Review
     template_name = 'review/confirm_delete_review.html'
     success_url = '/list'
+    
+class cart(LoginRequiredMixin, generic.ListView):
+    model = Cart
+    template_name = 'cart/cart.html'
+    success_url = '/'
+
+
+# class checkout(LoginRequiredMixin, generic.ListView):
+#     template_name = 'checkout/checkout.html'
     

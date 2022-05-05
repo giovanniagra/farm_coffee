@@ -33,6 +33,13 @@ class Profile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
+# Automation to create car once a user instance is created.
+@receiver(post_save, sender=User)
+def create_user_cart(sender, instance, created, **kwargs):
+    if created:
+        Cart.objects.create(user=instance)
+        
+
 class Role(models.Model):
     ADMIN = 'Adm'
     EMPLOYEE = 'Emp'
@@ -107,11 +114,11 @@ class Review(models.Model):
 
 class Cart(models.Model):
     cart_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product)
     ordered = models.BooleanField(default=False)
     cart_quantity = models.IntegerField(default=1)
-    order_topping_quantity = models.IntegerField()
+    order_topping_quantity = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.cart_quantity}"
@@ -135,3 +142,5 @@ class Payment_Proof(models.Model):
     users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+
