@@ -135,16 +135,9 @@ def profilepage(request):
     })
 
 # Add to Cart Function
-
-def add_to_cart(request):
-    user_cart = len(Cart.objects.filter(user=request.user))
-    print(user_cart, request.POST)
-    # if user_cart:
-        # add product to user cart
-
-        # return to the same page
-    # create a new cart and add product
-
+# @login_required(login_url='login')
+# def add_to_cart(request):
+    
 
 
     
@@ -168,7 +161,17 @@ class create_product(LoginRequiredMixin, generic.CreateView):
     template_name = 'product/product_form.html'
     form_class = ProductForm
     success_url = '/list' 
-    
+
+    def get_context_data(self, **kwargs):
+        ctx = super(create_product, self).get_context_data(**kwargs)
+        prods = Product.objects.all()
+        cates = []
+        for prod in prods:
+            if prod.category is not None and not prod.category in cates:
+                cates.append(prod.category)
+        ctx["cates"] = cates
+        return ctx
+
     def form_valid(self, form):
         print("super", super().form_valid(form),)
         return super().form_valid(form)
@@ -283,6 +286,11 @@ class cart(LoginRequiredMixin, generic.ListView):
     model = Cart
     template_name = 'cart/cart.html'
     success_url = '/'
+
+
+
+
+
 
 
 # class checkout(LoginRequiredMixin, generic.ListView):

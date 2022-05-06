@@ -5,19 +5,39 @@
 {% if product %}
     
     <h2>{{ product.product_id }}</h2>
-    <h2>{{ product.name }}</h2>
-    <h2>{{ product.price }}</h2>
-    <h2>{{ product.image }}</h2>
-    <h2>{{ product.availability }}</h2>
+    <h2></h2>
+    <h2></h2>
+    <h2></h2>
+    <h2></h2>
     
     <h2>{% for topping in product.toppings.all %}
             <h2>Added Topping: {{ topping.name }}</h2>
         {% endfor %}
     </h2>
 
-    
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{ product.image }}" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p>Star rating goes here</p> 
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <hr>
+              <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
+              <div class="add-to-cart">
+              <h5>฿{{ product.price }}</h5>
+              <input type="number">
+              <button type="button" class="btn btn-primary">Add to Cart</button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <form method="POST" action="{% url 'farm_coffee_app:add_to_cart' %}">
+    <form method="POST" action="">
         {% csrf_token %}
         <input type="hidden" name="product" value="{{ product.product_id }}"/>
         <input class="options" type="checkbox" name="toppings" id="Boba" value="Boba"/><label for="">Boba</label><br>

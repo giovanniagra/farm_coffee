@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <form method="POST" action="{% url 'farm_coffee_app:create_product' %}">
     {% csrf_token %}
 
@@ -11,6 +12,14 @@
 
     <label for="image">Image</label>
     <input type="file" name="image">
+
+    <label for="category">Category</label>
+    <input type="text" name="category" list="categories">
+    <datalist id="categories">
+        {% for cate in cates %}
+        <option value="{{ cate }}">
+        {% endfor %}
+    </datalist>
 
     <label for="availability">Product Availability</label>
     <input type="checkbox" name="availability">

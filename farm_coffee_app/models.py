@@ -78,6 +78,8 @@ class Order_Status(models.Model):
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255, null=True, blank=True)
+    # type = models.CharField(max_length=255, null=True, blank=True)
     price = models.FloatField()
     image = models.ImageField(upload_to='images/', default='https://drive.google.com/uc?export=view&id=1aj_vT5zjJlkdEQ_VcCsdnvpVBi-Fjwyb')
     availability = models.BooleanField()

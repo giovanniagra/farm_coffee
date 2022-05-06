@@ -42,7 +42,7 @@ class ProfileForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('name', 'price', 'availability')
+        fields = ("__all__")
 
 # Total Order Form
 
