@@ -245,6 +245,7 @@ class delete_product(LoginRequiredMixin, generic.DeleteView):
         
 #         return super().form_valid(form)
 
+# Functions dealing with Reviews
 @login_required(login_url='login')
 def create_review(request):
     product_fk_product_id=request.POST['product_fk_product_id']
@@ -281,11 +282,15 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
     model = Review
     template_name = 'review/confirm_delete_review.html'
     success_url = '/list'
-    
-class cart(LoginRequiredMixin, generic.ListView):
-    model = Cart
-    template_name = 'cart/cart.html'
-    success_url = '/'
+
+# Functions dealing with the cart  
+# @login_required(login_url='login')  
+# def read_cart(request):
+#     user = User.objects.get(user=request.user)
+#     items = Cart.objects.get(user=user)
+#     context = {'items': items, ''}
+#     template_name = 'cart/cart.html'
+#     success_url = '/'
 
 
 

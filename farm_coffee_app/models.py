@@ -10,6 +10,7 @@ from django.utils import timezone
 import datetime
 from django.conf import settings
 from django.shortcuts import reverse
+from django.db.models.deletion import CASCADE, SET_NULL
 
 
 # Create your models here.
@@ -124,6 +125,22 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"{self.cart_quantity}"
+    
+    @property
+    def get_total_items(self):
+        total = 0
+        items = User.objects.filter(user=self.user).values('quantity')
+        for item in items:
+            total += items['quantity']
+        return total 
+    
+    @property
+    def get_total_price(self):
+        price = 0
+        products = User.objects.filter(self.user)
+        for item in products:
+            price += item.product.price * item.quantity
+        return price
 
 class Total_Order(models.Model):
     order_id = models.AutoField(primary_key=True)
@@ -144,5 +161,19 @@ class Payment_Proof(models.Model):
     users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+class Item(models.Model):
+    total_order = models.ForeignKey(Total_Order, on_delete=CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.order.user} ordered {self.product.name}"
+
+class Quantity(models.Model):
+    item = models.OneToOneField(Item, on_delete=CASCADE, null=True)
+    quantity = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.item.product.name} Quantity ={str(self.quantity)}"
 
 
