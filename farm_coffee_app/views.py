@@ -134,13 +134,6 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
-# Add to Cart Function
-# @login_required(login_url='login')
-# def add_to_cart(request):
-    
-
-
-    
 
 # class create_order(generic.CreateView):
 #     model = Total_Order
@@ -242,14 +235,14 @@ class delete_product(LoginRequiredMixin, generic.DeleteView):
 #             messages.success(self.request, "review has been created")
 #         except:
 #             messages.success(self.request, "review was not created")
-        
+       
 #         return super().form_valid(form)
 
 # Functions dealing with Reviews
 @login_required(login_url='login')
 def create_review(request):
     product_fk_product_id=request.POST['product_fk_product_id']
-
+    print(request.user)
     review=Review(
         users_fk_user_id=request.user,
         product_fk_product_id=Product.objects.get(product_id=product_fk_product_id),
@@ -284,16 +277,46 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
     success_url = '/list'
 
 # Functions dealing with the cart  
-# @login_required(login_url='login')  
-# def read_cart(request):
-#     user = User.objects.get(user=request.user)
-#     items = Cart.objects.get(user=user)
-#     context = {'items': items, ''}
-#     template_name = 'cart/cart.html'
-#     success_url = '/'
+@login_required(login_url='login')  
+def read_cart(request):
+    user = Profile.objects.get(user=request.user)
+    items = Cart.objects.get(user=user)
+    # context = {'items': items, 'total_price': retrieve_total_price(request), 'cartItems': retrieve_cart_items(request)}
+    return render(request, 'cart/cart.html', context)
+  
 
+# Getting total amount of items in the cart
+@login_required(login_url='login')  
+def retrieve_cart_items(request):
+    total_items = ''
+    try:
+        user = Profile.objects.get(user=request.user)
+        cart = Cart.objects.get(user=user)
+        total_items = cart.get_total_items
+    except:
+        total_items = 0
+        messages.info("The cart is empty")
+    
+    return total_items
 
+# Getting total price of items in the cart
+@login_required(login_url='login')  
+def retrieve_total_price(request):
+    total_price = 0
+    try:
+        user = Profile.objects.get(user=request.user)
+        cart = Cart.objects.get(user=user)
+        total_price = cart.get_total_price
+    except:
+        total_price = 0
+        messages.info("The cart is empty")
+    return total_price
 
+# Cart Checkout Function
+@login_required(login_url='login')  
+def cart_checkout(request):
+    user = Profile.objects.get(user=request.user)
+    # context = {'items': items, 'total_price': retrieve_total_price(request), 'cartItems': retrieve_cart_items(request)}
 
 
 

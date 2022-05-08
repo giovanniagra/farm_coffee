@@ -32,7 +32,7 @@ urlpatterns = [
     path('update_review/<int:pk>/', views.update_review.as_view(), name='update_review'),
     path('delete_review/<int:pk>/', views.delete_review.as_view(), name='delete_review'),
 
-    # path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
-    # path('cart/', views.cart.as_view(), name='cart'),
+    #urls for cart
+    path('cart/', views.read_cart, name='read_cart'),
 
 ]

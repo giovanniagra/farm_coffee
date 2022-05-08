@@ -129,15 +129,16 @@ class Cart(models.Model):
     @property
     def get_total_items(self):
         total = 0
-        items = User.objects.filter(user=self.user).values('quantity')
+        items = Cart.objects.filter(user=self.user).values('cart_quantity')
+        print(items)
         for item in items:
-            total += items['quantity']
+            total += item['cart_quantity']
         return total 
     
     @property
     def get_total_price(self):
         price = 0
-        products = User.objects.filter(self.user)
+        products = Cart.objects.filter(self.user)
         for item in products:
             price += item.product.price * item.quantity
         return price
