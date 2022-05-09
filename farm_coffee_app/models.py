@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.forms import JSONField
 from django.utils import timezone
 import datetime
 from django.conf import settings
@@ -62,20 +63,6 @@ class Role(models.Model):
 #     last_name = models.CharField(max_length=255)
 #     password = models.CharField(max_length=255)
 
-class Order_Status(models.Model):
-    ORDERING = 'ORD'
-    PREPARING = 'PRE'
-    DELIVERING = 'DEL'
-    DELIVERED = 'DED'
-    STATUS_NAMES = (
-        (ORDERING,'Ordering'),
-        (PREPARING,'Preparing'),
-        (DELIVERING,'Delivering'),
-        (DELIVERED, 'Delivered'),
-    )
-    status_id = models.AutoField(primary_key=True)
-    status_name = models.CharField(max_length=50, choices=STATUS_NAMES)
-
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -93,28 +80,6 @@ class Product(models.Model):
         return reverse("farm_coffee_app:read_product_detail", kwargs={
             "pk" : self.pk
         })
-
-class Topping(models.Model):
-    toppings_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    price = models.FloatField()
-    products = models.ManyToManyField(Product, related_name='toppings')
-    availability = models.BooleanField()
-
-    def __str__(self):
-        return f"{self.toppings_id} {self.name}"
-
-class Review(models.Model):
-    reviews_id = models.AutoField(primary_key=True)
-    users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
-    rating = models.FloatField()
-    review_description = models.TextField()
-    pub_date = models.DateTimeField(auto_now_add=True, blank=True)
-
-    def __str__(self):
-        return f"{self.reviews_id} {self.review_description}"
-
 class Cart(models.Model):
     cart_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -143,38 +108,60 @@ class Cart(models.Model):
             price += item.product.price * item.quantity
         return price
 
-class Total_Order(models.Model):
+class Order(models.Model):
+    ORDERING = 'ORD'
+    PREPARING = 'PRE'
+    DELIVERING = 'DEL'
+    DELIVERED = 'DED'
+    STATUS_NAMES = (
+        (ORDERING,'Ordering'),
+        (PREPARING,'Preparing'),
+        (DELIVERING,'Delivering'),
+        (DELIVERED, 'Delivered'),
+    )
     order_id = models.AutoField(primary_key=True)
+    status_name = models.CharField(max_length=50, choices=STATUS_NAMES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    # order_status_fk_status_id = models.OneToOneField(Order_Status, on_delete=models.CASCADE)
-    cart_fk_cart_id = models.ManyToManyField(Cart)
+    cart = models.ManyToManyField(Cart)      #has products
+    # products = models.ManyToManyField(Product) #????
     order_created_time = models.DateTimeField()
-    ordered = models.BooleanField(default=False)
     time_of_delivery = models.DateTimeField()
     delivery_completion = models.DateTimeField()
     payment_received = models.BooleanField()
+    detail = JSONField("order_detail")  #has details about those products
 
     def __str__(self):
-        return self.user.username
+        return f"{self.order_id} {self.status_name}"
+
+
+class Topping(models.Model):
+    toppings_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    price = models.FloatField()
+    products = models.ManyToManyField(Product, related_name='toppings')
+    availability = models.BooleanField()
+
+    def __str__(self):
+        return f"{self.toppings_id} {self.name}"
+
+class Review(models.Model):
+    reviews_id = models.AutoField(primary_key=True)
+    users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    product_fk_product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
+    rating = models.FloatField()
+    review_description = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __str__(self):
+        return f"{self.reviews_id} {self.review_description}"
+
 
 class Payment_Proof(models.Model):
 
     users_fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_order_fk_order_id = models.ForeignKey(Total_Order, on_delete=models.CASCADE)
+    total_order_fk_order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
-class Item(models.Model):
-    total_order = models.ForeignKey(Total_Order, on_delete=CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=SET_NULL, null=True)
 
-    def __str__(self):
-        return f"{self.order.user} ordered {self.product.name}"
-
-class Quantity(models.Model):
-    item = models.OneToOneField(Item, on_delete=CASCADE, null=True)
-    quantity = models.IntegerField(null=True)
-
-    def __str__(self):
-        return f"{self.item.product.name} Quantity ={str(self.quantity)}"
 
 

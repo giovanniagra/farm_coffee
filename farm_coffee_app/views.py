@@ -1,3 +1,4 @@
+from asyncio import proactor_events
 from itertools import chain
 from multiprocessing import context
 from pyexpat import model
@@ -21,23 +22,27 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.views import generic
 from .forms import *
-from .models import Product, Profile, Review, Total_Order, Cart
+from .models import Product, Profile, Review, Order, Cart
 import traceback
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+import csv
 
 
 
 # Create your views here.
 
 # Sign-Up, Log-In, and Password-reset
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def home(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')[0:4]
     return render(request, 'home.html', {"products": products})
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def menu(request):
     return render(request, 'menu.html', {})
 
@@ -166,6 +171,7 @@ class create_product(LoginRequiredMixin, generic.CreateView):
         return ctx
 
     def form_valid(self, form):
+        
         print("super", super().form_valid(form),)
         return super().form_valid(form)
 
@@ -277,50 +283,157 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
     success_url = '/list'
 
 # Functions dealing with the cart  
-@login_required(login_url='login')  
-def read_cart(request):
-    user = Profile.objects.get(user=request.user)
-    items = Cart.objects.get(user=user)
-    # context = {'items': items, 'total_price': retrieve_total_price(request), 'cartItems': retrieve_cart_items(request)}
-    return render(request, 'cart/cart.html', context)
+# @login_required(login_url='login')  
+# def read_cart(request):
+#     profile = Profile.objects.get(user=request.user)
+#     items = Cart.objects.get(user=profile.user)
+#     context = {'items': items, 'total_price': retrieve_total_price(request), 'cart_items': retrieve_cart_items(request)}
+#     return render(request, 'cart/cart.html', context)
   
 
 # Getting total amount of items in the cart
-@login_required(login_url='login')  
-def retrieve_cart_items(request):
-    total_items = ''
-    try:
-        user = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(user=user)
-        total_items = cart.get_total_items
-    except:
-        total_items = 0
-        messages.info("The cart is empty")
+# @login_required(login_url='login')  
+# def retrieve_cart_items(request):
+#     total_items = ''
+#     try:
+#         user = Profile.objects.get(user=request.user)
+#         cart = Cart.objects.get(user=user)
+#         total_items = cart.get_total_items
+#     except:
+#         total_items = 0
+#         messages.info(request,"The cart is empty")
     
-    return total_items
+#     return total_items
 
 # Getting total price of items in the cart
-@login_required(login_url='login')  
-def retrieve_total_price(request):
-    total_price = 0
-    try:
-        user = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(user=user)
-        total_price = cart.get_total_price
-    except:
-        total_price = 0
-        messages.info("The cart is empty")
-    return total_price
+# @login_required(login_url='login')  
+# def retrieve_total_price(request):
+#     total_price = 0
+#     try:
+#         user = Profile.objects.get(user=request.user)
+#         cart = Cart.objects.get(user=user)
+#         total_price = cart.get_total_price
+#     except:
+#         total_price = 0
+#         messages.info(request,"No items")
+#     return total_price
 
 # Cart Checkout Function
-@login_required(login_url='login')  
-def cart_checkout(request):
-    user = Profile.objects.get(user=request.user)
-    # context = {'items': items, 'total_price': retrieve_total_price(request), 'cartItems': retrieve_cart_items(request)}
+# @login_required(login_url='login')  
+# def cart_checkout(request):
+#     user = Profile.objects.get(user=request.user)
+#     context = {'cart_items': retrieve_cart_items(request), 'total_price': retrieve_total_price(request)}
+    # if request.method == 'POST':
+    #     form = TotalOrderForm(request.POST)
+    #     if form.is_valid():
+    #         order = form.save()
+    #         cart = Cart.objects.filter(user=user)[0]
+    #         for cart in cart:
+    #             item = Item.objects.create(order=order, product=cart.product)
+    #             Quantity.objects.create(item=item, quantity=cart.cart_quantity)
+    #             Cart.objects.filter(user=user).delete()			
+    #         return redirect('store')
+    #     error = form.errors
+    #     for e in error:
+    #         error = e
+    #     messages.warning(request,' is not valid')
+    #     return redirect('cart_checkout')
+    # return render(request, 'checkout/checkout.html', context)
+
+# Add to cart function
+# @login_required(login_url='login')  
+# def add_to_cart(request):
+#     cart = Cart.objects.get(user=Cart.user)
+#     products = Product.objects.get()
+#     if cart:
+# 		existed_item = Cart.objects.filter(user=user, product=products)
+# 		if existed_item:
+# 			existed_item.update(quantity=F('quantity') + 1)
+# 		else:
+# 			Cart.objects.create(user=user, product=products, quantity=1).save()
+# 	else:
+# 		Cart.objects.create(user=user, product=products, quantity=1)	
+    
 
 
 
 
 # class checkout(LoginRequiredMixin, generic.ListView):
 #     template_name = 'checkout/checkout.html'
+
+def recommendations_views(request):
+    reviews = pd.read_csv(r"recommendation_engine\reviews.csv", usecols=['userId', 'productId', 'rating'])
+    products = pd.read_csv(r'recommendation_engine\products.csv', usecols=['productId', 'title'])
+    reviews2 = pd.merge(reviews, products, how='inner', on='productId')
+
+    current_user = request.user
+    user = current_user.id(object)
+
+    df = reviews2.pivot_table(index='title',columns='userId',values='rating').fillna(0)
+    df1 = df.copy()
+
+    num_neighbors = 10
+    num_recommendation = 10
     
+    number_neighbors = num_neighbors
+    
+    knn = NearestNeighbors(metric='cosine', algorithm='brute')
+    knn.fit(df.values)
+    distances, indices = knn.kneighbors(df.values, n_neighbors=number_neighbors)
+    
+    user_index = df.columns.tolist().index(user)
+    
+    for p,t in list(enumerate(df.index)):
+        if df.iloc[p, user_index] == 0:
+            sim_products = indices[p].tolist()
+            product_distances = distances[p].tolist()
+            
+            if p in sim_products:
+                id_product = sim_products.index(p)
+                sim_products.remove(p)
+                product_distances.pop(id_product)
+                
+            else:
+                sim_products = sim_products[:num_neighbors-1]
+                product_distances = product_distances[:num_neighbors-1]
+                
+            product_similarity = [1-x for x in product_distances]
+            product_similarity_copy = product_similarity.copy()
+            nominator = 0
+            
+            for s in range(0, len(product_similarity)):
+                if df.iloc[sim_products[s], user_index] == 0:
+                    if len(product_similarity_copy) == (number_neighbors - 1):
+                        product_similarity_copy.pop(s)
+                        
+                    else:
+                        product_similarity_copy.pop(s-(len(product_similarity)-len(product_similarity_copy)))
+                        
+                else:
+                    nominator = nominator + product_similarity[s]*df.iloc[sim_products[s],user_index]
+                    
+            if len(product_similarity_copy) > 0:
+                if sum(product_similarity_copy) > 0:
+                    predicted_r = nominator/sum(product_similarity_copy)
+                    
+                else:
+                    predicted_r = 0
+                    
+            else:
+                predicted_r = 0
+                
+            df1.iloc[p,user_index] = predicted_r
+    
+    recommended_products = []
+
+    for m in df[df[user] == 0].index.tolist():
+        index_df = df.index.tolist().index(m)
+        predicted_rating = df1.iloc[index_df, df1.columns.tolist().index(user)]
+        recommended_products.append((m, predicted_rating))
+
+    sorted_rm = sorted(recommended_products, key=lambda x:x[1], reverse=True)
+     
+    recommendations = sorted_rm[:num_recommendation]
+    recommendations = [ x[0] for x in recommendations]
+
+    return render(request, "recommendations/recommendation.html", {'recommendations':recommendations})

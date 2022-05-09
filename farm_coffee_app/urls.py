@@ -23,8 +23,8 @@ urlpatterns = [
     path('update/<int:pk>/', views.update_product.as_view(), name='update_product'),
     path('delete/<int:pk>/', views.delete_product.as_view(), name='delete_product'),
 
-    # urls for order
-    # path('create_order', views.create_order.as_view(), name='total_order_form')
+    # urls for recommendation
+    path('recommendations/', views.recommendations_views, name='recommendations'),
 
     # urls for review
     path('review/', views.create_review, name='create_review'),
@@ -33,6 +33,7 @@ urlpatterns = [
     path('delete_review/<int:pk>/', views.delete_review.as_view(), name='delete_review'),
 
     #urls for cart
-    path('cart/', views.read_cart, name='read_cart'),
+    # path('cart/', views.read_cart, name='read_cart'),
+    # path('checkout/', views.cart_checkout, name='cart_checkout'),
 
 ]

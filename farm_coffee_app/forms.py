@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from .models import Product, Profile, Review, Total_Order
+from .models import Order, Product, Profile, Review
 
 
 # Forms creation
@@ -44,9 +44,9 @@ class ProductForm(forms.ModelForm):
         fields = ("__all__")
 
 # Total Order Form
-class TotalOrderForm(forms.ModelForm):
+class OrderForm(forms.ModelForm):
     class Meta:
-        model =Total_Order
+        model = Order
         fields = ("__all__")
 
 # Review Form

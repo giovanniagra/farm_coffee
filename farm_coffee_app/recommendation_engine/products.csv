@@ -1,0 +1,203 @@
+productId,title,type,price
+1,Premium Espresso - Hot,Premium Coffee|Coffee,35
+2,Premium Espresso - Iced,Premium Coffee|Coffee,45
+3,Premium Espresso - Frappe,Premium Coffee|Coffee,55
+4,Premium Capuccino - Hot,Premium Coffee|Coffee,35
+5,Premium Capuccino - Iced,Premium Coffee|Coffee,45
+6,Premium Capuccino - Frappe,Premium Coffee|Coffee,55
+7,Premium Mocha - Hot,Premium Coffee|Coffee,35
+8,Premium Mocha - Iced,Premium Coffee|Coffee,50
+9,Premium Mocha - Frappe,Premium Coffee|Coffee,55
+10,Premium Latte - Hot,Premium Coffee|Coffee,35
+11,Premium Latte - Iced,Premium Coffee|Coffee,45
+12,Premium Latte - Frappe,Premium Coffee|Coffee,55
+13,Premium Americano - Hot,Premium Coffee|Coffee,35
+14,Premium Americano - Iced,Premium Coffee|Coffee,45
+15,Premium Americano - Frappe,Premium Coffee|Coffee,55
+16,Premium Black Honey - Hot,Premium Coffee|Coffee,35
+17,Premium Black Honey - Iced,Premium Coffee|Coffee,50
+18,Premium Black Honey - Frappe,Premium Coffee|Coffee,55
+19,Premium Caramel Coffee - Hot,Premium Coffee|Coffee,35
+20,Premium Caramel Coffee - Iced,Premium Coffee|Coffee,50
+21,Premium Caramel Coffee - Frappe,Premium Coffee|Coffee,55
+22,Premium Hazelnut Coffee - Hot,Premium Coffee|Coffee,35
+23,Premium Hazelnut Coffee - Iced,Premium Coffee|Coffee,50
+24,Premium Hazelnut Coffee - Frappe,Premium Coffee|Coffee,55
+25,Premium Vanilla Coffee - Hot,Premium Coffee|Coffee,35
+26,Premium Vanilla Coffee - Iced,Premium Coffee|Coffee,50
+27,Premium Vanilla Coffee - Frappe,Premium Coffee|Coffee,55
+28,Espresso - Hot,Coffee,25
+29,Espresso - Iced,Coffee,30
+30,Espresso - Frappe,Coffee,35
+31,Capuccino - Hot,Coffee,30
+32,Capuccino - Iced,Coffee,30
+33,Capuccino - Frappe,Coffee,35
+34,Mocha - Hot,Coffee,30
+35,Mocha - Iced,Coffee,35
+36,Mocha - Frappe,Coffee,40
+37,Latte - Hot,Coffee,30
+38,Latte - Iced,Coffee,30
+39,Latte - Frappe,Coffee,35
+40,Americano - Hot,Coffee,25
+41,Americano - Iced,Coffee,30
+42,Black Honey - Hot,Coffee,30
+43,Black Honey - Iced,Coffee,35
+44,Caramel Coffee - Hot,Coffee,30
+45,Caramel Coffee - Iced,Coffee,35
+46,Caramel Coffee - Frappe,Coffee,40
+47,Hazelnut Coffee - Hot,Coffee,30
+48,Hazelnut Coffee - Iced,Coffee,35
+49,Hazelnut Coffee - Frappe,Coffee,40
+50,Vanilla Coffee - Hot,Coffee,30
+51,Vanilla Coffee - Iced,Coffee,35
+52,Vanilla Coffee - Frappe,Coffee,40
+53,Thai Tea Fresh Milk - Hot,Green Tea|Tea,25
+54,Thai Tea Fresh Milk - Iced,Green Tea|Tea,25
+55,Thai Tea Fresh Milk - Frappe,Green Tea|Tea,30
+56,Green Tea Fresh Milk - Hot,Green Tea|Tea,25
+57,Green Tea Fresh Milk - Iced,Green Tea|Tea,25
+58,Green Tea Fresh Milk - Frappe,Green Tea|Tea,30
+59,Black Tea - Hot,Green Tea|Tea,25
+60,Black Tea - Iced,Green Tea|Tea,25
+61,Black Tea - Frappe,Green Tea|Tea,30
+62,Lemon Tea - Hot,Green Tea|Tea,25
+63,Lemon Tea - Iced,Green Tea|Tea,25
+64,Lemon Tea - Frappe,Green Tea|Tea,30
+65,Black Green Tea - Hot,Green Tea|Tea,25
+66,Black Green Tea - Iced,Green Tea|Tea,25
+67,Black Green Tea - Frappe,Green Tea|Tea,30
+68,Lemon Green Tea - Hot,Green Tea|Tea,25
+69,Lemon Green Tea - Iced,Green Tea|Tea,25
+70,Lemon Green Tea - Frappe,Green Tea|Tea,30
+71,Premium Green Tea - Hot,Green Tea|Tea,30
+72,Premium Green Tea - Iced,Green Tea|Tea,35
+73,Premium Green Tea - Frappe,Green Tea|Tea,40
+74,Butterfly Pea Tea Fresh Milk - Hot,Green Tea|Tea,30
+75,Butterfly Pea Tea Fresh Milk - Iced,Green Tea|Tea,35
+76,Butterfly Pea Tea Fresh Milk - Frappe,Green Tea|Tea,40
+77,Butterfly Pea Lemon Tea - Hot,Green Tea|Tea,30
+78,Butterfly Pea Lemon Tea - Iced,Green Tea|Tea,35
+79,Butterfly Pea Lemon Tea - Frappe,Green Tea|Tea,40
+80,Oolong Tea Latte - Iced,Green Tea|Tea,30
+81,Oolong Tea Latte - Frappe,Green Tea|Tea,35
+82,Signature Tea - Hot,Green Tea|Tea,25
+83,Signature Tea - Iced,Green Tea|Tea,25
+84,Signature Tea - Frappe,Green Tea|Tea,30
+85,Matcha Latte Tea - Hot,Matcha Green Tea|Tea,30
+86,Matcha Latte Tea - Iced,Matcha Green Tea|Tea,35
+87,Matcha Latte Tea - Frappe,Matcha Green Tea|Tea,40
+88,Ganmaicha Latte Tea - Hot,Matcha Green Tea|Tea,30
+89,Ganmaicha Latte Tea - Iced,Matcha Green Tea|Tea,35
+90,Ganmaicha Latte Tea - Frappe,Matcha Green Tea|Tea,40
+91,Hojicha Latte - Hot,Matcha Green Tea|Tea,30
+92,Hojicha Latte - Iced,Matcha Green Tea|Tea,35
+93,Hojicha Latte - Frappe,Matcha Green Tea|Tea,40
+94,Matcha Japanese Style - Hot,Matcha Green Tea|Tea,30
+95,Matcha Japanese Style - Iced,Matcha Green Tea|Tea,35
+96,Matcha Japanese Style - Frappe,Matcha Green Tea|Tea,40
+97,Ganmaicha Japanese Style - Hot,Matcha Green Tea|Tea,30
+98,Ganmaicha Japanese Style - Iced,Matcha Green Tea|Tea,35
+99,Ganmaicha Japanese Style - Frappe,Matcha Green Tea|Tea,40
+100,Hojicha Japanese Style - Hot,Matcha Green Tea|Tea,30
+101,Hojicha Japanese Style - Iced,Matcha Green Tea|Tea,35
+102,Hojicha Japanese Style - Frappe,Matcha Green Tea|Tea,40
+103,Matcha Lemon Tea Japanese Style - Hot,Matcha Green Tea|Tea,30
+104,Matcha Lemon Tea Japanese Style - Iced,Matcha Green Tea|Tea,35
+105,Matcha Lemon Tea Japanese Style - Frappe,Matcha Green Tea|Tea,40
+106,Ganmaicha Lemon Tea Japanese Style - Hot,Matcha Green Tea|Tea,30
+107,Ganmaicha Lemon Tea Japanese Style - Iced,Matcha Green Tea|Tea,35
+108,Ganmaicha Lemon Tea Japanese Style - Frappe,Matcha Green Tea|Tea,40
+109,Hojicha Lemon Tea Japanese Style - Hot,Matcha Green Tea|Tea,30
+110,Hojicha Lemon Tea Japanese Style - Iced,Matcha Green Tea|Tea,35
+111,Hojicha Lemon Tea Japanese Style - Frappe,Matcha Green Tea|Tea,40
+112,Fresh Milk / Caramel - Hot,Milk 100% Natural,25
+113,Fresh Milk / Caramel - Iced,Milk 100% Natural,25
+114,Fresh Milk / Caramel - Frappe,Milk 100% Natural,30
+115,Pink Milk - Hot,Milk 100% Natural,25
+116,Pink Milk - Iced,Milk 100% Natural,25
+117,Pink Milk - Frappe,Milk 100% Natural,30
+118,Honey Fresh Milk - Hot,Milk 100% Natural,30
+119,Honey Fresh Milk - Iced,Milk 100% Natural,30
+120,Honey Fresh Milk - Frappe,Milk 100% Natural,35
+121,Mint Fresh Milk - Hot,Milk 100% Natural,25
+122,Mint Fresh Milk - Iced,Milk 100% Natural,25
+123,Mint Fresh Milk - Frappe,Milk 100% Natural,30
+124,Strawberry Fresh Milk - Hot,Milk 100% Natural,25
+125,Strawberry Fresh Milk - Iced,Milk 100% Natural,25
+126,Strawberry Fresh Milk - Frappe,Milk 100% Natural,30
+127,Banana Fresh Milk - Hot,Milk 100% Natural,25
+128,Banana Fresh Milk - Iced,Milk 100% Natural,25
+129,Banana Fresh Milk - Frappe,Milk 100% Natural,30
+130,Cantaloupe Fresh Milk - Hot,Milk 100% Natural,25
+131,Cantaloupe Fresh Milk - Iced,Milk 100% Natural,25
+132,Cantaloupe Fresh Milk - Frappe,Milk 100% Natural,30
+133,White Malt Latte - Hot,Milk 100% Natural,30
+134,White Malt Latte - Iced,Milk 100% Natural,30
+135,White Malt Latte - Frappe,Milk 100% Natural,35
+136,Cocoa Fresh Milk / Ovaltine - Hot,Milk 100% Natural,25
+137,Cocoa Fresh Milk / Ovaltine - Iced,Milk 100% Natural,25
+138,Cocoa Fresh Milk / Ovaltine - Frappe,Milk 100% Natural,30
+139,Chocolate - Hot,Milk 100% Natural,25
+140,Chocolate - Iced,Milk 100% Natural,30
+141,Chocolate - Frappe,Milk 100% Natural,35
+142,Choco-Mint - Hot,Milk 100% Natural,30
+143,Choco-Mint - Iced,Milk 100% Natural,35
+144,Choco-Mint - Frappe,Milk 100% Natural,40
+145,Choco-Banana - Hot,Milk 100% Natural,30
+146,Choco-Banana - Iced,Milk 100% Natural,35
+147,Choco-Banana - Frappe,Milk 100% Natural,40
+148,Choco Strawberry - Hot,Milk 100% Natural,30
+149,Choco Strawberry - Iced,Milk 100% Natural,35
+150,Choco Strawberry - Frappe,Milk 100% Natural,40
+151,Choco-White Malt - Hot,Milk 100% Natural,30
+152,Choco-White Malt - Iced,Milk 100% Natural,35
+153,Choco-White Malt - Frappe,Milk 100% Natural,40
+154,Rose Tea Lemonade - Iced,Fruit Tea|Tea,25
+155,Rose Tea Lemonade - Frappe,Fruit Tea|Tea,30
+156,Mint Tea Lemonade - Iced,Fruit Tea|Tea,25
+157,Mint Tea Lemonade - Frappe,Fruit Tea|Tea,30
+158,Strawberry Tea - Iced,Fruit Tea|Tea,25
+159,Strawberry Tea - Frappe,Fruit Tea|Tea,30
+160,Raspberry Tea - Iced,Fruit Tea|Tea,25
+161,Raspberry Tea - Frappe,Fruit Tea|Tea,30
+162,Blue Paradise Tea - Iced,Fruit Tea|Tea,25
+163,Blue Paradise Tea - Frappe,Fruit Tea|Tea,30
+164,Apple Tea - Iced,Fruit Tea|Tea,25
+165,Apple Tea - Frappe,Fruit Tea|Tea,30
+166,Ume Plum Tea - Iced,Fruit Tea|Tea,25
+167,Ume Plum Tea - Frappe,Fruit Tea|Tea,30
+168,Honey Lemon Tea - Iced,Fruit Tea|Tea,30
+169,Honey Lemon Tea - Frappe,Fruit Tea|Tea,35
+170,Rose Lemonade Soda,Italian Soda,25
+171,Mint Lemonade Soda,Italian Soda,25
+172,Strawberry Soda,Italian Soda,25
+173,Raspberry Soda,Italian Soda,25
+174,Blue Paradise Soda,Italian Soda,25
+175,Apple Soda,Italian Soda,25
+176,Ume Plum Soda,Italian Soda,25
+177,Honey Lemon Soda,Italian Soda,30
+178,Pandan Cake,Baked Goods,
+179,Vanilla Egg Cake,Baked Goods,
+180,Brownies,Baked Goods,
+181,Butter Cake,Baked Goods,
+182,Banana Cake,Baked Goods,
+183,Biscuits,Baked Goods,
+184,Chewy Bread,Baked Goods,
+185,Cookies,Baked Goods,
+186,Cornflakes Big,Other,
+187,Cornflakes Small,Other,
+188,Butter Toast,Baked Goods,
+189,Orange Cake,Baked Goods,
+190,Choco-Cake,Baked Goods,
+191,Sandwich,Baked Goods,
+192,Drip Coffee,Other,
+193,Coffee Powder,Other,
+194,Coconut Pandan Cake,Baked Goods,
+195,Baked Cheesecake,Baked Goods,50
+196,Blueberry Cheese Pie,Baked Goods,
+197,Strawberry Cake,Baked Goods,
+198,Blueberry Cake,Baked Goods,
+199,Butter Toast Almond,Baked Goods,
+200,Toffee Café,Baked Goods,
+201,Taiwanese Milk Tea,Other,
+202,Foi Thong Chiffon,Baked Goods,

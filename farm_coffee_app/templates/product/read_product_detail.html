@@ -5,11 +5,7 @@
 {% if product %}
     
     <h2>{{ product.product_id }}</h2>
-    <h2></h2>
-    <h2></h2>
-    <h2></h2>
-    <h2></h2>
-    
+        
     <h2>{% for topping in product.toppings.all %}
             <h2>Added Topping: {{ topping.name }}</h2>
         {% endfor %}
@@ -20,31 +16,32 @@
           <div class="col-md-4">
             <img src="{{ product.image }}" class="img-fluid rounded-start" alt="...">
           </div>
-          <div class="col-md-8">
+          <form class="col-md-8" id="process_order">
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
               <p>Star rating goes here</p> 
               <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
               <hr>
               <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
+              <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
+              {% for topping in product.toppings.all %}
+              <br />
+              <input type="checkbox" name="topping" value="{{ topping.pk }}" class="options" /> <label> {{ topping.name }}</label>  <br />
+              {% endfor %}
+              <input type="checkbox" name="toppings" id="None" value="None" onClick="checkbox()"/><label for="">None</label><br>
+
               <div class="add-to-cart">
               <h5>฿{{ product.price }}</h5>
-              <input type="number">
-              <button type="button" class="btn btn-primary">Add to Cart</button>
+              <button type="submit" class="btn btn-primary" onClick="">Add to Cart</button>
             </div>
             </div>
-          </div>
+          </form>
         </div>
-      </div>
+      </div> 
 
     <form method="POST" action="">
         {% csrf_token %}
-        <input type="hidden" name="product" value="{{ product.product_id }}"/>
-        <input class="options" type="checkbox" name="toppings" id="Boba" value="Boba"/><label for="">Boba</label><br>
-        <input class="options" type="checkbox" name="toppings" id="Whipped_Cream" value="Whipped Cream"/><label for="">Whipped Cream</label><br>
-        <input class="options" type="checkbox" name="toppings" id="Coffee_Shot" value="Coffee Shot"/><label for="">Coffee Shot</label><br>
-        <input type="checkbox" name="toppings" id="None" value="None" onClick="checkbox()"/><label for="">None</label><br>
-    <button>Submit</button>
+   <button>Submit</button>
 
 </form>
     <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
@@ -100,6 +97,16 @@
                 selectedOptions.forEach(element => {element.disabled=false});
             }
         }
+        const process_order = document.querySelector('#process_order')
+        process_order.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const product_id = process_order.querySelector("#product_id").value;
+            const options = [...process_order.querySelectorAll(".options")].filter(item => item.checked).map(item => item.value);
+            console.log("processing order", {product_id, options})
+        })
+        console.log(process_order)
+
+        
     </script> 
         
 {% endblock %}
