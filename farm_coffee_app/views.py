@@ -267,9 +267,10 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
 # Functions dealing with the cart logic  
 @login_required(login_url='farm_coffee_app:login')
 def cart(request):
-    order = Order.objects.get(user=request.user)
-    print(order)
-    if not order:
+    try:
+        order = Order.objects.get(user=request.user)
+    except Order.DoesNotExist:
+        messages.debug(request, "Can't access cart. Try to add on of our items!")
         return redirect('farm_coffee_app:read_product_list')
 
     # order = order.first()

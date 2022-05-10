@@ -44,7 +44,7 @@
         <input hidden name='path' value="{{ request.path }}" />
             <input hidden type="number" name="product_fk_product_id" value={{product.product_id}}>
         <label for="rating">Rating</label>
-             <input type="number" min="0" max="5" name="rating" class="range-field">
+             <input type="number" min="0" max="5" name="rating" step="0.5" class="range-field">
     
         <label for="review_description">Review</label>
             <input type="text" name="review_description">
