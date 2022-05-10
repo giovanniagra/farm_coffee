@@ -7,11 +7,11 @@ app_name = 'farm_coffee_app'
 
 urlpatterns = [
     path('', views.home, name="home"),
-    path('menu', views.menu),
-    path("register", views.registrationview, name='register'),
-    path("login", views.loginView, name="login"),
-    path('logout', views.logoutuser, name='logout'),
-    # path("profile", views.profilepage, name = 'profilepage'),
+    path('menu', views.menu.as_view(), name='menu'),
+    # path("register", views.registrationview, name='register'),
+    # path("login", views.loginView, name="login"),
+    # path('logout', views.logoutuser, name='logout'),
+    path("profile", views.profilepage, name = 'profilepage'),
     # # path('<int:user_id>/', views.user_details, name='detail'),
     # path("password_reset", views.password_reset_request, name="password_reset"),
 
@@ -36,5 +36,7 @@ urlpatterns = [
     #urls for cart
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
+    path('update_item/', views.update_item, name='update_item'),
+    path('placeorder/', views.placeorder, name='placeorder'),
 
 ]

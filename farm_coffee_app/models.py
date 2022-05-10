@@ -1,5 +1,6 @@
 from asyncio.windows_events import NULL
 from distutils.command.upload import upload
+from email.policy import default
 from msilib.schema import AdminExecuteSequence
 from django.db import models
 from django.contrib.auth.models import User
@@ -79,7 +80,7 @@ class Product(models.Model):
     # topping_choices = models.CharField(max_length=2, choices=TOPPING_CHOICES)
     price = models.FloatField()
     # topping_price = models.FloatField()
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='static/farm_coffee_app/images', default='static/farm_coffee_app/images/default.jpg')
     availability = models.BooleanField()
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -112,10 +113,16 @@ class Order(models.Model):
         (DELIVERED, 'Delivered'),
     )
     order_id = models.AutoField(primary_key=True)
-    status_name = models.CharField(max_length=50, choices=STATUS_NAMES)
+    status_name = models.CharField(max_length=50, choices=STATUS_NAMES, default=ORDERING)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    # cart = models.ManyToManyField(Cart)      #has products
-    # products = models.ManyToManyField(Product) #????
+    first_name = models.CharField(max_length=150, null=False)
+    last_name = models.CharField(max_length=150, null=False)
+    street = models.CharField(max_length=150)
+    city = models.CharField(max_length=150)
+    province = models.CharField(max_length=150)
+    zip_code = models.CharField(max_length=150)
+    phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
+    phone_number = models.CharField(validators = [phoneNumberRegex], max_length=16)
     order_created_time = models.DateTimeField(null=True, blank=True)
     time_of_delivery = models.DateTimeField(null=True, blank=True)
     delivery_completion = models.DateTimeField(null=True, blank=True)
@@ -136,6 +143,11 @@ class Order(models.Model):
         orderitems = self.cart_set.all()
         total = sum([item.quantity for item in orderitems])
         return total 
+
+    @property
+    def shipping(self):
+        shipping = False
+        return shipping
 
     
 

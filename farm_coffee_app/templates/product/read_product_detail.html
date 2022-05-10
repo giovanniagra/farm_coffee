@@ -22,14 +22,14 @@
               
               <div class="add-to-cart">
               <h5>฿{{ product.price }}</h5>
-              <button type="submit" class="btn btn-primary" onClick="">Add to Cart</button>
+              <button type="button" data-product="{{product.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
             </div>
             </div>
           </form>
         </div>
       </div> 
 
-    <form method="POST" action="">
+    <form method="POST" action=""> 
         {% csrf_token %}
    <button>Submit</button>
 
@@ -87,15 +87,6 @@
                 selectedOptions.forEach(element => {element.disabled=false});
             }
         }
-
-        const process_order = document.querySelector('#process_order')
-        process_order.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const product_id = process_order.querySelector("#product_id").value;
-            const options = [...process_order.querySelectorAll(".options")].filter(item => item.checked).map(item => item.value);
-            console.log("processing order", {product_id, options})
-        })
-        console.log(process_order)
     </script> 
         
 {% endblock %}

@@ -23,7 +23,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
 from django.views import generic, View
-from .forms import *
+from .forms import UserForm, ProfileForm
 from .models import Product, Profile, Review, Order, Cart
 import traceback
 from datetime import datetime
@@ -137,58 +137,12 @@ def recommendation_engine(request):
     recommendations = Product.objects.filter(product_id__in=set)
     
     return recommendations
-
-# Registration, Log-In, and Authentication
-def registrationview(request):
-    if request.user.is_authenticated:
-        return redirect('farm_coffee_app:home')
-    else:
-        form = SignUpForm()
-        if request.method == 'POST':
-            form = SignUpForm(request.POST)
-            if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('first_name')
-                messages.success(request, 'Account created for ' + user)
-
-                return redirect('farm_coffee_app:login')
-
-        context = {'form':form}
-        return render(request, 'register.html', context)
-
-def loginView(request):
-    if request.user.is_authenticated:
-        return redirect('farm_coffee_app:home')
-    else:
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return redirect('farm_coffee_app:home')
-            else:
-                messages.info(request, 'Username OR Password is incorrect')
-
-
-    context = {}
-    return render(request, 'login.html', context)
-
-def logoutuser(request):
-    logout(request)
-    return redirect('farm_coffee_app:login')
     
 
 # @login_required(login_url='login')
 def home(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')[0:4]
     return render(request, 'home.html', {"products": products})
-
-# @login_required(login_url='login')
-def menu(request):
-    return render(request, 'menu.html', {})
 
 #Profile CRUD
 @login_required(login_url='farm_coffee_app:login')
@@ -211,19 +165,6 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
-
-# class create_order(generic.CreateView):
-#     model = Total_Order
-#     template_name = 'order/total_order_form.html'
-#     form_class= TotalOrderForm
-
-#     def form_valid(self, form):
-#         print("super", super().form_valid(form),)
-#         return super().form_valid(form)
-
-# class read_order(generic.DetailView):
-# class read_order_list(generic.ListView):
-# class delete_order(generic.DeleteView):
 
 #Product CRUD
 class create_product(LoginRequiredMixin, generic.CreateView):
@@ -253,6 +194,14 @@ class read_product_list(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+
+# Displays the menu
+class menu( generic.ListView):
+    template_name = 'menu.html'
+    context_object_name = 'view_product_list'
+
+    def get_queryset(self):
+        return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
         
 
 class read_product_detail(generic.DetailView):
@@ -261,13 +210,6 @@ class read_product_detail(generic.DetailView):
     
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
-
-    # def get_context_data(self):
-    #     products = Product.objects.get(product_id=self.kwargs.get('pk'))
-
-    #     reviews = Review.objects.all().filter(product_fk_product_id=self.kwargs.get('pk'))
-    #     return {"products":products, "reviews":reviews}
-
 
 
 class update_product(LoginRequiredMixin, generic.UpdateView):
@@ -283,38 +225,6 @@ class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
     success_url = '/list'
-
-#Topping CRUD
-# class create_topping(generic.CreateView):
-# class read_topping(generic.DetailView):
-# class read_topping_list(generic.ListView):
-# class update_topping(generic.UpdateView):
-# class delete_topping(generic.DeleteView):
-
-#Review CRUD --- rewrite it using function based
-
-
-# class create_review(generic.CreateView):
-#     model = Review
-#     template_name = 'review/review_form.html'
-#     form_class = ReviewForm
-#     success_url = '/details/5'
-#     def form_valid(self, form):
-#         product_fk_product_id=form.cleaned_data['product_fk_product_id']
-#         rating= form.cleaned_data['rating']
-#         review_description =form.cleaned_data['review_description']
-#         try:
-#             review = Review(
-#                 users_fk_user_id=self.request.user,
-#                 product_fk_product_id=Product.objects.get(product_id=product_fk_product_id),
-#                 rating=rating,
-#                 review_description= review_description)
-#             review.save()
-#             messages.success(self.request, "review has been created")
-#         except:
-#             messages.success(self.request, "review was not created")
-       
-#         return super().form_valid(form)
 
 # Functions dealing with Reviews
 @login_required(login_url='farm_coffee_app:login')
@@ -358,6 +268,11 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
 @login_required(login_url='farm_coffee_app:login')
 def cart(request):
     order = Order.objects.get(user=request.user)
+    print(order)
+    if not order:
+        return redirect('farm_coffee_app:read_product_list')
+
+    # order = order.first()
     items = Cart.objects.filter(order=order).order_by('-date_added')
     context = {'items':items, 'order':order}
     return render(request, 'cart/cart.html', context)
@@ -365,80 +280,69 @@ def cart(request):
 # Functions dealing with checkout logic
 @login_required(login_url='farm_coffee_app:login')
 def checkout(request):
+    form_details = ProfileForm()
+    form_name = UserForm()
+
     order = Order.objects.get(user=request.user)
     items = Cart.objects.filter(order=order).order_by('-date_added')
-    context = {'items':items, 'order':order}
+    context = {'items':items, 'order':order, 'form_details':form_details, 'form_name':form_name}
     return render(request, 'checkout/checkout.html', context)
 
-# Getting total amount of items in the cart
-# @login_required(login_url='login')  
-# def retrieve_cart_items(request):
-#     total_items = ''
-#     try:
-#         user = Profile.objects.get(user=request.user)
-#         cart = Cart.objects.get(user=user)
-#         total_items = cart.get_total_items
-#     except:
-#         total_items = 0
-#         messages.info(request,"The cart is empty")
+# @login_required(login_url='farm_coffee_app:login')
+def update_item(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    print('Action:', action)
+    print('Product:', productId)
+
+    customer = request.user
+    product = Product.objects.get(product_id=productId)
+    order, created = Order.objects.get_or_create(user=customer, payment_received=False)
+
+    cart, created = Cart.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        cart.quantity = (cart.quantity + 1)
+    elif action == 'remove':
+        cart.quantity = (cart.quantity - 1)
     
-#     return total_items
+    cart.save()
 
-# Getting total price of items in the cart
-# @login_required(login_url='login')  
-# def retrieve_total_price(request):
-#     total_price = 0
-#     try:
-#         user = Profile.objects.get(user=request.user)
-#         cart = Cart.objects.get(user=user)
-#         total_price = cart.get_total_price
-#     except:
-#         total_price = 0
-#         messages.info(request,"No items")
-#     return total_price
+    if cart.quantity <= 0:
+        cart.delete()
+    return JsonResponse('Item was added', safe=False)
 
-# Cart Checkout Function
-# @login_required(login_url='login')  
-# def cart_checkout(request):
-#     user = Profile.objects.get(user=request.user)
-#     context = {'cart_items': retrieve_cart_items(request), 'total_price': retrieve_total_price(request)}
-#     if request.method == 'POST':
-#         form = TotalOrderForm(request.POST)
-#         if form.is_valid():
-#             order = form.save()
-#             cart = Cart.objects.filter(user=user)[0]
-#             for cart in cart:
-#                 item = Item.objects.create(order=order, product=cart.product)
-#                 Quantity.objects.create(item=item, quantity=cart.cart_quantity)
-#                 Cart.objects.filter(user=user).delete()			
-#             return redirect('store')
-#         error = form.errors
-#         for e in error:
-#             error = e
-#         messages.warning(request,' is not valid')
-#         return redirect('cart_checkout')
-#     return render(request, 'checkout/checkout.html', context)
+@login_required(login_url='farm_coffee_app:login')
+def placeorder(request):
+    if request.method == 'POST':
+        neworder = Order()
+        neworder.user = request.user
+        neworder.first_name = request.POST.get('first_name')
+        neworder.last_name = request.POST.get('last_name')
+        neworder.street = request.POST.get('street')
+        neworder.city = request.POST.get('city')
+        neworder.province = request.POST.get('province')
+        neworder.zip_code = request.POST.get('zip_code')
+        neworder.phone_number = request.POST.get('phone_number')
 
-# Add to cart function
-# @login_required(login_url='login')  
-# def add_to_cart(request):
-#     cart = Cart.objects.get(user=Cart.user)
-#     products = Product.objects.get()
-#     if cart:
-# 		existed_item = Cart.objects.filter(user=user, product=products)
-# 		if existed_item:
-# 			existed_item.update(quantity=F('quantity') + 1)
-# 		else:
-# 			Cart.objects.create(user=user, product=products, quantity=1).save()
-# 	else:
-# 		Cart.objects.create(user=user, product=products, quantity=1)	
-    
+        neworder.total_price = Order.get_cart_total()
+        neworder.save
 
+        neworderitems = Cart.objects.filter(user=request.user)
+        for item in neworderitems:
+            Cart.objects.create(
+                order=neworder,
+                product=item.product,
+                price=item.product.price
+            )
+        
+        Cart.objects.filter(user=request.user).delete()
 
+        messages.success(request, "Your order has been received! We will be working on it as soon as possible!")
 
+        return redirect('')
 
-# class checkout(LoginRequiredMixin, generic.ListView):
-#     template_name = 'checkout/checkout.html'
 def recommendation_page(request):
     recommendations=recommendation_engine(request)
     

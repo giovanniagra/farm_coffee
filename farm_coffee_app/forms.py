@@ -37,6 +37,7 @@ class ProfileForm(forms.ModelForm):
         fields = ('street', 'city', 'province', 'zip_code', 'phone_number')
 
 
+
 # Product Form
 class ProductForm(forms.ModelForm):
     class Meta:
