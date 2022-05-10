@@ -50,12 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'farm_coffee_app',
-    # 'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'phonenumbers',
+    'reset_migrations',
+
+    'django.contrib.sites',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -71,6 +73,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -113,6 +117,13 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -149,12 +160,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 
-STATIC_URL = 'static/'
-# STATIC_ROOT = os.path.join(BASE_DIR,  'static/')
-# STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = '/static/'
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, '')
+# STATIC_ROOT = os.path.join(BASE_DIR,  'static/')
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+MEDIA_URL = '/farm_coffee_app/images/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/farm_coffee_app/images')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

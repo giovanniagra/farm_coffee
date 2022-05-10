@@ -35,11 +35,11 @@ class Profile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
-# Automation to create car once a user instance is created.
-@receiver(post_save, sender=User)
-def create_user_cart(sender, instance, created, **kwargs):
-    if created:
-        Cart.objects.create(user=instance)
+# Automation to create cart once a user instance is created.
+# @receiver(post_save, sender=User)
+# def create_user_cart(sender, instance, created, **kwargs):
+#     if created:
+#         Cart.objects.create(user=instance)
         
 
 class Role(models.Model):
@@ -64,12 +64,22 @@ class Role(models.Model):
 #     password = models.CharField(max_length=255)
 
 class Product(models.Model):
+    # BOBA = 'B'
+    # WHIPPED_CREAM = 'WC'
+    # COFFEE_SHOT = 'CS'
+    # TOPPING_CHOICES = (
+    #     (BOBA,'Boba'),
+    #     (WHIPPED_CREAM,'Whipped Cream'),
+    #     (COFFEE_SHOT,'Coffee Shot'),
+    # )
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     category = models.CharField(max_length=255, null=True, blank=True)
     # type = models.CharField(max_length=255, null=True, blank=True)
+    # topping_choices = models.CharField(max_length=2, choices=TOPPING_CHOICES)
     price = models.FloatField()
-    image = models.ImageField(upload_to='images/', default='https://drive.google.com/uc?export=view&id=1aj_vT5zjJlkdEQ_VcCsdnvpVBi-Fjwyb')
+    # topping_price = models.FloatField()
+    image = models.ImageField(null=True, blank=True)
     availability = models.BooleanField()
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -80,33 +90,15 @@ class Product(models.Model):
         return reverse("farm_coffee_app:read_product_detail", kwargs={
             "pk" : self.pk
         })
-class Cart(models.Model):
-    cart_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product)
-    ordered = models.BooleanField(default=False)
-    cart_quantity = models.IntegerField(default=1)
-    order_topping_quantity = models.IntegerField(default=0)
 
-    def __str__(self):
-        return f"{self.cart_quantity}"
-    
     @property
-    def get_total_items(self):
-        total = 0
-        items = Cart.objects.filter(user=self.user).values('cart_quantity')
-        print(items)
-        for item in items:
-            total += item['cart_quantity']
-        return total 
-    
-    @property
-    def get_total_price(self):
-        price = 0
-        products = Cart.objects.filter(self.user)
-        for item in products:
-            price += item.product.price * item.quantity
-        return price
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
+
 
 class Order(models.Model):
     ORDERING = 'ORD'
@@ -121,28 +113,42 @@ class Order(models.Model):
     )
     order_id = models.AutoField(primary_key=True)
     status_name = models.CharField(max_length=50, choices=STATUS_NAMES)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    cart = models.ManyToManyField(Cart)      #has products
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    # cart = models.ManyToManyField(Cart)      #has products
     # products = models.ManyToManyField(Product) #????
-    order_created_time = models.DateTimeField()
-    time_of_delivery = models.DateTimeField()
-    delivery_completion = models.DateTimeField()
-    payment_received = models.BooleanField()
+    order_created_time = models.DateTimeField(null=True, blank=True)
+    time_of_delivery = models.DateTimeField(null=True, blank=True)
+    delivery_completion = models.DateTimeField(null=True, blank=True)
+    payment_received = models.BooleanField(null=True, blank=True)
     detail = JSONField("order_detail")  #has details about those products
 
     def __str__(self):
-        return f"{self.order_id} {self.status_name}"
+        return f"{self.order_id} {self.status_name} {self.user}"
 
+    @property
+    def get_cart_total(self):
+        orderitems = self.cart_set.all()
+        total = sum([item.get_total for item in orderitems])
+        return total 
+    
+    @property
+    def get_cart_items(self):
+        orderitems = self.cart_set.all()
+        total = sum([item.quantity for item in orderitems])
+        return total 
 
-class Topping(models.Model):
-    toppings_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    price = models.FloatField()
-    products = models.ManyToManyField(Product, related_name='toppings')
-    availability = models.BooleanField()
+    
 
-    def __str__(self):
-        return f"{self.toppings_id} {self.name}"
+class Cart(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    quantity = models.IntegerField(default=0, null=True, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def get_total(self):
+        total = self.product.price * self.quantity
+        return total
 
 class Review(models.Model):
     reviews_id = models.AutoField(primary_key=True)

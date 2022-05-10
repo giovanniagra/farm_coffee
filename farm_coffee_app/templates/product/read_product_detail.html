@@ -6,15 +6,10 @@
     
     <h2>{{ product.product_id }}</h2>
         
-    <h2>{% for topping in product.toppings.all %}
-            <h2>Added Topping: {{ topping.name }}</h2>
-        {% endfor %}
-    </h2>
-
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-4">
-            <img src="{{ product.image }}" class="img-fluid rounded-start" alt="...">
+            <img src="{{ product.imageURL }}" class="img-fluid rounded-start" alt="...">
           </div>
           <form class="col-md-8" id="process_order">
             <div class="card-body">
@@ -24,12 +19,7 @@
               <hr>
               <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
               <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
-              {% for topping in product.toppings.all %}
-              <br />
-              <input type="checkbox" name="topping" value="{{ topping.pk }}" class="options" /> <label> {{ topping.name }}</label>  <br />
-              {% endfor %}
-              <input type="checkbox" name="toppings" id="None" value="None" onClick="checkbox()"/><label for="">None</label><br>
-
+              
               <div class="add-to-cart">
               <h5>฿{{ product.price }}</h5>
               <button type="submit" class="btn btn-primary" onClick="">Add to Cart</button>
@@ -83,7 +73,7 @@
             {% else %}
                 <h2>The are currently no reviews available.</h2>
             {% endif %}
-
+            <h2>{{process_order.product_id}}</h2>
 
     <script>
         function checkbox(){
@@ -97,6 +87,7 @@
                 selectedOptions.forEach(element => {element.disabled=false});
             }
         }
+
         const process_order = document.querySelector('#process_order')
         process_order.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -105,8 +96,6 @@
             console.log("processing order", {product_id, options})
         })
         console.log(process_order)
-
-        
     </script> 
         
 {% endblock %}

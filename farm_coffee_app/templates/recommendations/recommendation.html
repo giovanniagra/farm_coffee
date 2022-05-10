@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="w-75 m-auto">
-    <h2 class="text-center my-3 bg-warning">Here are some recommendations!</h2>
+<div class="container-wrapper">
+    {% if recommended %}
+    <h5 class="my-4 text-light">Here are some recommendations for you!</h5>
     <div class="row">
-        {% for recommendation in recommendations %}
-            <div class="ol-lg-4 col-md-4 col-sm-4 col-12">
-                <div class="card my-2" data-toggle="tooltip" title="{{product}}">
-                    <a href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}" class="product_a">
-                        <div class="card-header bg-primary"></div>
-                        <div class="card-body">{{result}}</div>
-                        <div class="card-footer bg-success"></div>
-                    </a>
+        {% for item in recommended %}
+        <div class="col-4 mb-2">
+            <div class="card" style="width: 18rem">
+                <img src="{{item.image}}" alt="Card image cap" class="card-img-top" height="250px" width="200px">
+                <div class="card-footer">
+                    <small class="text-muted">{{item.name}}</small>
+                    <small class="text-muted">{{item.category}}</small>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </div>
+    {% else %}
+    <h5 class="my-4 text-light">Oops! Seems like we don't have recommendations for you. Come buy some drinks and rate them! And then we'll give you some amazing suggestions!</h5>
+    {% endif %}
 </div>
 
 {% endblock %}

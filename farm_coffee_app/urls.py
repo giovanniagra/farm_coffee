@@ -1,18 +1,19 @@
 from unicodedata import name
 from django.urls import path
 from .import views
+from django.views.decorators.csrf import csrf_exempt
 
 app_name = 'farm_coffee_app'
 
 urlpatterns = [
     path('', views.home, name="home"),
     path('menu', views.menu),
-    path("register", views.register_request, name='register'),
-    path("login", views.login_request, name="login"),
-    path('logout', views.logout_request, name='logout'),
-    path("profile", views.profilepage, name = 'profilepage'),
-    # path('<int:user_id>/', views.user_details, name='detail'),
-    path("password_reset", views.password_reset_request, name="password_reset"),
+    path("register", views.registrationview, name='register'),
+    path("login", views.loginView, name="login"),
+    path('logout', views.logoutuser, name='logout'),
+    # path("profile", views.profilepage, name = 'profilepage'),
+    # # path('<int:user_id>/', views.user_details, name='detail'),
+    # path("password_reset", views.password_reset_request, name="password_reset"),
 
     # urls for adding-to-cart
     
@@ -24,7 +25,7 @@ urlpatterns = [
     path('delete/<int:pk>/', views.delete_product.as_view(), name='delete_product'),
 
     # urls for recommendation
-    path('recommendations/', views.recommendations_views, name='recommendations'),
+    path('recommendations/', views.recommendation_page, name='recommendations'),
 
     # urls for review
     path('review/', views.create_review, name='create_review'),
@@ -33,7 +34,7 @@ urlpatterns = [
     path('delete_review/<int:pk>/', views.delete_review.as_view(), name='delete_review'),
 
     #urls for cart
-    # path('cart/', views.read_cart, name='read_cart'),
-    # path('checkout/', views.cart_checkout, name='cart_checkout'),
+    path('cart/', views.cart, name='cart'),
+    path('checkout/', views.checkout, name='checkout'),
 
 ]

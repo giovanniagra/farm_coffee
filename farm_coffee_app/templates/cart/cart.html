@@ -2,49 +2,53 @@
 
 {% block content %}
 
-<section class="pt-5 mt-5 container">
-<h2 class="font-weight-bold pt-5">Cart</h2>
-</section>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box-element">
 
-<section class=" cart-container container my-5" >
-    <table width="100%">
-        <thead>
-            <tr>
-                <td>Remove</td>
-                <td>Image</td>
-                <td>Product</td>
-                <td>Price</td>
-                <td>Quantity</td>
-                <td>Total</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><a href="#"><i class="bi bi-trash-fill"></i></a></td>
-                <td><img src="..." alt=""></td>
-                <td><h5>Product Name</h5></td>
-                <td><h5>฿Price</h5></td>
-                <td><input type="number" class="w-25"></td>
-                <td><h5>฿Total Price</h5></td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+            <a  class="btn btn-outline-dark" href="{% url 'farm_coffee_app:home' %}">&#x2190; Continue Shopping</a>
 
-<section id="cart-bottom" class="container">
-<div class="total col-lg-6 col-md-6 col-12"></div>
-    <div>
-        <h5>Cart Total</h5>
-        <div class="d-flex justify-content-between">
-            <h6>Subtotal</h6>
-            <p>Price</p>
+            <br>
+            <br>
+            <table class="table">
+                <tr>
+                    <th><h5>Items: <strong>{{order.get_cart_items}}</strong></h5></th>
+                    <th><h5>Total:<strong> {{order.get_cart_total|floatformat:2}}</strong></h5></th>
+                    <th>
+                        <a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
+                    </th>
+                </tr>
+            </table>
+
         </div>
-        <hr/>
-        <div class="d-flex justify-content-between">
-            <h6>Total</h6>
-            <p>Price</p>
+
+        <br>
+        <div class="box-element">
+            <div class="cart-row">
+                <div style="flex:2"></div>
+                <div style="flex:2"><strong>Item</strong></div>
+                <div style="flex:1"><strong>Price</strong></div>
+                <div style="flex:1"><strong>Quantity</strong></div>
+                <div style="flex:1"><strong>Total</strong></div>
+            </div>
+     
+            {% for item in items %}
+            <div class="cart-row">
+                <div style="flex:2;"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                <div style="flex:2"><p>{{item.product.name}}</p></div>
+                <div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
+                <div style="flex:1">
+                    <p class="quantity">{{item.quantity}}</p>
+                    <div class="quantity">
+                        <img class="chg-quantity" src="">
+                
+                        <img class="chg-quantity" src="">
+                    </div>
+                </div>
+                <div style="flex:1"><p>${{item.get_total}}</p></div>
+            </div>
+            {% endfor %}
         </div>
-        <button class="ml-auto">Proceed to Checkout</button>
+    </div>
 </div>
-</section>
 {% endblock %}
