@@ -142,14 +142,13 @@ class Order(models.Model):
     def get_cart_items(self):
         orderitems = self.cart_set.all()
         total = sum([item.quantity for item in orderitems])
-        return total 
+        return total
 
-    @property
+    @property 
     def shipping(self):
         shipping = False
         return shipping
-
-    
+        
 
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
@@ -181,5 +180,10 @@ class Payment_Proof(models.Model):
     address_fk_address_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
 
+class Item(models.Model):
+    order = models.ForeignKey(Order, on_delete=CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=SET_NULL, null=True)
 
+    def __str__(self):
+        return f'{self.order.user} ordered {self.product.name}'
 

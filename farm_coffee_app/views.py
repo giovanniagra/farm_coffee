@@ -4,6 +4,7 @@ from multiprocessing import context
 from pyexpat import model
 from re import template
 from sqlite3 import complete_statement
+from tkinter.tix import Tree
 from urllib.request import ProxyDigestAuthHandler
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -24,7 +25,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
 from django.views import generic, View
 from .forms import UserForm, ProfileForm
-from .models import Product, Profile, Review, Order, Cart
+from .models import Product, Profile, Review, Order, Cart, Item
 import traceback
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -165,6 +166,21 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
+# View History
+@login_required(login_url='farm_coffee_app:login')
+def view_history(request):
+    orders = Order.objects.filter(user_id=request.user)
+
+    items = [order for order in orders]
+    items = Item.objects.filter(order__in=items)
+    context = {'orders': orders, 'items': items}
+    
+    return render(request, 'order/order_history.html', context)
+
+def view_product_history(request, pk):
+    items = Item.objects.filter(order_id=pk)
+    quantity = Cart.objects.filter(quantity__in=items)
+    return render(request, 'order/order_history_details.html', {'items': zip(items, quantity)})
 
 #Product CRUD
 class create_product(LoginRequiredMixin, generic.CreateView):
@@ -271,11 +287,13 @@ def cart(request):
         order = Order.objects.get(user=request.user)
     except Order.DoesNotExist:
         messages.debug(request, "Can't access cart. Try to add on of our items!")
-        return redirect('farm_coffee_app:read_product_list')
+        return redirect('farm_coffee_app:menu')
 
     # order = order.first()
     items = Cart.objects.filter(order=order).order_by('-date_added')
     context = {'items':items, 'order':order}
+    print(context)
+    print(items)
     return render(request, 'cart/cart.html', context)
   
 # Functions dealing with checkout logic
@@ -314,35 +332,35 @@ def update_item(request):
         cart.delete()
     return JsonResponse('Item was added', safe=False)
 
+# Function for processing the order
 @login_required(login_url='farm_coffee_app:login')
-def placeorder(request):
-    if request.method == 'POST':
-        neworder = Order()
-        neworder.user = request.user
-        neworder.first_name = request.POST.get('first_name')
-        neworder.last_name = request.POST.get('last_name')
-        neworder.street = request.POST.get('street')
-        neworder.city = request.POST.get('city')
-        neworder.province = request.POST.get('province')
-        neworder.zip_code = request.POST.get('zip_code')
-        neworder.phone_number = request.POST.get('phone_number')
+def processOrder(request):
+    data = json.loads(request.body)
 
-        neworder.total_price = Order.get_cart_total()
-        neworder.save
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order = Order.objects.get_or_create(user=customer, payment_received=False)
+        total = float(data['form']['total'])
 
-        neworderitems = Cart.objects.filter(user=request.user)
-        for item in neworderitems:
-            Cart.objects.create(
-                order=neworder,
-                product=item.product,
-                price=item.product.price
+        if total == float(order.get_cart_total):
+            order.complete = True
+        order.save()
+
+        if order.shipping == True:
+            Profile.objects.create(
+            user=customer,
+            street=data['Profile']['street'],
+            city=data['Profile']['city'],
+            province=data['Profile']['province'],
+            zip_code=data['Profile']['zip_code'],
+            phone_number=data['Profile']['phone_number'],
             )
-        
-        Cart.objects.filter(user=request.user).delete()
 
-        messages.success(request, "Your order has been received! We will be working on it as soon as possible!")
 
-        return redirect('')
+    else:
+        print('User is not logged in')
+    return JsonResponse('Payment submitted..',safe=False)
+
 
 def recommendation_page(request):
     recommendations=recommendation_engine(request)

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Order History</h2>
+
+<table class="table table-sm">
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Image</th>
+    </tr>
+    {% for item, quantity in items %}
+    <tr>
+        <td>{{item.product.name}}</td>
+        <td>{{quantity.quantity}}</td>
+        <td><img src="{{ product.imageURL }}" width="80px< height="50px"/img></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

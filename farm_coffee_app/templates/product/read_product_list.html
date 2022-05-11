@@ -6,23 +6,16 @@
   <div class="row">
     {% for product_list in view_product_list %}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
-            <a href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}" style="text-decoration: none;">
             <div class="card shadow">
                 <img src="product.imageURL" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h2 class="card-title">{{ product_list.name }}</h2>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <p class="card-text">฿{{ product_list.price }}</p>
                 </div>
                 <div class="card-body card-p">
                     <div class="row">
-                        <div class="col col-xs-4 ">
-                            <i class="far fa-comments"></i> 456
-                        </div>
-                        <div class="col col-xs-4 ">
-                            <i class="far fa-heart"></i> 2.4k
-                        </div>
-                        <div class="col col-xs-4">
-                            <i class="fas fa-share"></i> 99
+                        <div class="col col-xmd-12">
+                          <a class="btn btn-outline-primary" href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">View</a>
                         </div>
                     </div>
                 </div>
@@ -36,7 +29,10 @@
   </div>
 </div>
 {% else %}
+<div class="d-flex flex-column align-items-center">
+    <img src="../static/farm_coffee_app/images/empty_state.png">
     <h2>The product list is currently empty. Please add product to view them in the list.</h2>
+  </div>
 {% endif %}
 
 {% endblock %}

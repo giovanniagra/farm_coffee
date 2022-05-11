@@ -3,9 +3,7 @@
 
 {{context}}
 {% if product %}
-    
-    <h2>{{ product.product_id }}</h2>
-        
+    <br>    
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-4">
@@ -14,12 +12,9 @@
           <form class="col-md-8" id="process_order">
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
-              <p>Star rating goes here</p> 
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-              <hr>
+              <p>(Star rating goes here)</p> 
               <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
               <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
-              
               <div class="add-to-cart">
               <h5>฿{{ product.price }}</h5>
               <button type="button" data-product="{{product.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Your Ordered History</h2>
+
+{% for order in orders %}
+
+<table>
+    <tr>
+        <th>Order Id</th>
+        <th>Customer</th>
+        <th>Street</th>
+        <th>City</th>
+        <th>Province</th>
+        <th>Zip code</th>
+        <th>Status</th>
+        <th>Ordered-Date</th>
+        <th>Product Details</th>
+    </tr>
+        <td>{{order.order_id}}</td>
+        <td>{{order.first_name}} {{order.last_name}}</td>
+        <td>{{order.street}}</td>
+        <td>{{order.city}}</td>
+        <td>{{order.province}}</td>
+        <td>{{order.zip_code}}</td>
+        <strong><td>{{order.status_name}}</td></strong>
+        <td>{{order.order_created_time}}</td>
+        <td><a href="{% url 'farm_coffee_app:ordered_products' order.order_id%}">View</a></td>
+    <tr>
+
+    </tr>
+</table>
+
+{% endfor%}
+
+{% endblock %}

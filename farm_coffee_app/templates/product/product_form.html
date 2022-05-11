@@ -3,7 +3,7 @@
 
 <form method="POST" action="{% url 'farm_coffee_app:create_product' %}">
     {% csrf_token %}
-
+    
     <label for="name">Product Name</label>
     <input type="text" name="name" size="255" required>
     
