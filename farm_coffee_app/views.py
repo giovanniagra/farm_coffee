@@ -9,17 +9,23 @@ from django.contrib import messages
 from django.views import generic
 from django.urls import reverse
 from datetime import datetime
-from .models import *
-from .forms import *
+from django.db.models import F
+from django.contrib.auth.models import User, Group
+from .models import Profile, Product, Order, Cart, Review, Item, Quantity
+from .forms import EmployeeForm, UserForm, ProfileForm, ProductForm, OrderForm, ReviewForm
 import pandas as pd
 import numpy as np
 import json
 
 
 
+
 #group checking 
 def is_manager(user):
     return (user.groups.filter(name="Manager").exists())
+
+def is_employee(user):
+    return (user.groups.filter(name="Employee").exists())
 
 # Recommendation Engine
 def recommendation_engine(request):
@@ -119,72 +125,6 @@ def recommendation_engine(request):
     
     return recommendations
     
-# To Display Messages in Class Based Views
-
-class SuccessMessageMixin:
-    success_message = ''
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        success_message = self.get_success_message(form.cleaned_data)
-        if success_message:
-            messages.success(self.request, success_message)
-        return response
-
-    def get_success_message(self, cleaned_data):
-        return self.success_message % cleaned_data
-
-class DebugMessageMixin:
-    debug_message = ''
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        debug_message = self.get_debug_message(form.cleaned_data)
-        if debug_message:
-            messages.debug(self.request, debug_message)
-        return response
-
-    def get_debug_message(self, cleaned_data):
-        return self.debug_message % cleaned_data
-
-class InfoMessageMixin:
-    info_message = ''
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        info_message = self.get_info_message(form.cleaned_data)
-        if info_message:
-            messages.debug(self.request, info_message)
-        return response
-
-    def get_info_message(self, cleaned_data):
-        return self.info_message % cleaned_data
-
-class WarningMessageMixin:
-    Warning_message = ''
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        warning_message = self.get_warning_message(form.cleaned_data)
-        if warning_message:
-            messages.warning(self.request, warning_message)
-        return response
-
-    def get_warning_message(self, cleaned_data):
-        return self.warning_message % cleaned_data
-
-class ErrorMessageMixin:
-    error_message = ''
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        error_message = self.get_error_message(form.cleaned_data)
-        if error_message:
-            messages.error(self.request, error_message)
-        return response
-
-    def get_error_message(self, cleaned_data):
-        return self.error_message % cleaned_data
 
 # Home pages for respective roles
 def home(request):
@@ -436,7 +376,7 @@ def recommendation_page(request):
     return render(request, "recommendations/recommendation.html", {'recommended':recommendations})
 
 
-# Creating Employees (For ADMIN ONLY)
+# Creating Employees (For EMPLOYEES AND MANAGERS ONLY)
 @login_required(login_url='farm_coffee_app:login')
 @user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 def create_employee(request):
@@ -446,9 +386,8 @@ def create_employee(request):
         form = EmployeeForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Profile.objects.create(user=user).save()
-            messages.success(request, f'Employee: {form.cleaned_data["first_name"]}')
-            return redirect('farm_coffee_app:create_employee')
+            messages.success(request, f'Employee: {form.cleaned_data["first_name"]} created')
+            return redirect('farm_coffee_app:dashboard')
         error = form.error_messages
         for e in error:
             error = e
@@ -456,3 +395,57 @@ def create_employee(request):
         return redirect('farm_coffee_app:create_employee')
     context = {'form':form, 'employee':user}
     return render(request, 'admin/admin_employee_creation.html', context)
+
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/")
+def employee_list(request):
+    employees = User.objects.filter(groups__name__in=['Employee'])
+    context = {'employees': employees}
+    return render(request, 'admin/employee_list.html', context)
+
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/")
+def employee_details(request, pk):
+    print("Hello World",pk)
+    employee = User.objects.get(id=pk)
+    context = {'employee': employee}
+    return render(request, 'admin/employee_details.html', context)
+
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/")
+def employee_delete(request, pk):
+    employee = User.objects.get(id=pk)
+    if request.method == "POST":
+        employee.delete()
+        return redirect('farm_coffee_app:employee_list')
+    context = {'employee':employee}
+    return render(request, 'admin/delete_employee.html', context)
+
+
+# Order Management (For EMPLOYEES AND MANAGERS ONLY)
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_employee, redirect_field_name="/")
+def order_list(request):
+    orders = Order.objects.all()
+    context = {'orders': orders}
+    return render(request, 'admin/order_list.html', context)
+
+
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_employee, redirect_field_name="/")
+def update_order(request, pk):
+        order = Order.objects.get(id=pk)
+        form = OrderForm(instance=order)
+        if request.method == 'POST':
+            form = OrderForm(request.POST, instance=order)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Order is updated successfully')
+                return redirect(reverse('update-order', args=[pk]))
+            error = form.errors
+            for e in error:
+                error = e
+            messages.warning(request, f'Invalid {error}')
+            return redirect(reverse('update-product', args=[pk]))
+        context = {'form': form}
+        return render(request, 'admin/update_order.html', context)

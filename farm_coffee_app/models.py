@@ -34,18 +34,21 @@ class Profile(models.Model):
         if created:
             group = Group.objects.get(name='Customer')
             group.user_set.add(instance)
-            
             Profile.objects.create(user=instance)
+            Cart.objects.create(user=instance.profile)
 
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
+    # @receiver(post_save, sender=User)
+    # def save_user_profile(sender, instance, **kwargs):
+    #     instance.profile.save()
+    #     Cart.objects.create(user=instance.profile)
+
+    # @receiver(post_save, sender=User)
+    # def create_user_cart(sender, instance, created, **kwargs):
+    #     if created:
+            
 
 # Automation to create cart once a user instance is created.
-# @receiver(post_save, sender=User)
-# def create_user_cart(sender, instance, created, **kwargs):
-#     if created:
-#         Cart.objects.create(user=instance)
+
 
 class Product(models.Model):
     # BOBA = 'B'
@@ -64,7 +67,7 @@ class Product(models.Model):
     # topping_choices = models.CharField(max_length=2, choices=TOPPING_CHOICES)
     price = models.FloatField()
     # topping_price = models.FloatField()
-    image = models.ImageField(upload_to='static/farm_coffee_app/images', default='static/farm_coffee_app/images/default.jpg')
+    image = models.ImageField(upload_to='product_images', default='default.jpg')
     availability = models.BooleanField()
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -137,7 +140,7 @@ class Cart(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.product.name
+        return f'Cart of {self.user.user}'
 
     @property
     def get_total(self):

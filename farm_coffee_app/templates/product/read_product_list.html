@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
 {% if view_product_list %}
 <div class="container">
   <div class="row">
+
     {% for product_list in view_product_list %}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
-            <div class="card shadow">
-                <img src="product.imageURL" class="card-img-top" alt="...">
+      <div class="card shadow">
+        
+        <img src="{{ product_list.imageURL }}" alt="{{product_list.name}}" width="300">
+          
                 <div class="card-body">
                     <h2 class="card-title">{{ product_list.name }}</h2>
                     <p class="card-text">฿{{ product_list.price }}</p>

@@ -17,14 +17,13 @@ for (var i=0; i < updateBtns.length; i++){
 function updateUserOrder(productId, action){
     console.log('User is authenticated, sending data...')
     var url = "/manage_cart/"
-
     fetch(url,{
         method: 'POST',
         headers:{
             'Content-Type':'application/json',
-            'X-CSRFToken' :csrftoken,
+            'X-CSRFToken' : csrftoken,
         },
-        body:JSON.stringify({'product_id': product_id, 'action': action})
+        body:JSON.stringify({'product_id': productId, 'action': action})
     })
     .then((response) => {
         return response.json();

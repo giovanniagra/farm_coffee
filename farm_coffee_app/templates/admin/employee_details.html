@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static%}
+
+
+{% block content %}
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a onclick="goBack()">Back</a></li>
+</nav><hr>
+
+<div class="row">
+	<div class="col-md-3">
+		<div class="card card-body" style="width: 500px; padding-bottom: 50px; margin-left: 300px">
+			<h4 style="text-align: center">Employee: {{employee.first_name}} {{employee.last_name}}</h4><hr>
+			<div class="customer-info">
+				<p>Username: <span>{{employee.username}}</span></p>
+				<p>Email: <span>{{employee.email}}</span></p>
+			</div>
+            <h3><a class="btn btn-sm btn-danger" href="{% url 'farm_coffee_app:delete_employee' employee.id %}">Delete Employee</a></h3>
+		</div>
+	</div>
+</div>
+
+<script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+{% endblock %}

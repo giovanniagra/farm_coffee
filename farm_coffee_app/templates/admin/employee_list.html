@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a onclick="goBack()">Back</a></li>
+    </ol>
+</nav><hr>
+
+<table class="table table-sm">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Details</th>
+        <th>Remove</th>
+    </tr>
+    {% for employee in employees %}
+<tr>
+    <td>{{employee.first_name}} {{employee.last_name}}</td>
+    <td>{{employee.email}}</td>
+
+    <td><a type='button' class="btn btn-sm btn-info" href="{% url 'farm_coffee_app:employee_details' employee.id %}">View</a></td> 
+
+    <td><a class="btn btn-sm btn-danger" href="{% url 'farm_coffee_app:delete_employee' employee.id %}">Delete</a></td>
+</tr>
+    {% endfor %}
+<a class="btn btn-primary btn-block text-uppercase" href="{% url 'farm_coffee_app:create_employee' %}">Add Customer</a>
+<hr>
+</table>
+
+
+<script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+{% endblock %}

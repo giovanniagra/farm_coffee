@@ -1,37 +1,53 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
 {% if messages %}
     {% for message in messages %}
         <div class="text-center alert alert-{{message.tags }}">
-            {{ message|safe }}
+            {{ message }}
         </div>
     {% endfor %}
 {% endif %}
 
-<form method="POST" action="{% url 'farm_coffee_app:' %}">
+<form method="POST" action="">
     {% csrf_token %}
 
-    <select name="groups" hidden>
-        <option selected>Employee</option>
-    </select>  
     
     <label for="name">Username</label>
-    <input type="text" name="username" size="100" required>
+    <div class="input-group mb-2">
+        {{form.username}}
+    </div>
     
-    <label for="price">First Name</label>
-    <input type="number" name="first_name" required>
+    <label for="first_name">First Name</label>
+    <div class="input-group mb-2">
+        {{form.first_name}}
+    </div>
 
-    <label for="image">Last Name</label>
-    <input type="file" name="last_name">
+    <label for="last_name">Last Name</label>
+    <div class="input-group mb-2">
+        {{form.last_name}}
+    </div>
 
-    <label for="category">Email</label>
-    <input type="text" name="email">
+    <label for="email">Email</label>
+    <div class="input-group mb-2">
+        {{form.email}}
+    </div>
 
+    <label for="password1">Password</label>
+    <div class="input-group mb-2">
+        {{form.password1}}
+    </div>
+    
+    <label for="password2">Password Confirm</label>
+    <div class="input-group mb-2">
+        {{form.password2}}
+    </div>
     
 
-    <input type="submit" value="Submission">
+    <input type="submit" value="Create Employee">
     
 </form>
+
 
 {% endblock %}

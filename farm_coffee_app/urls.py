@@ -42,8 +42,11 @@ urlpatterns = [
     # path('update_item/', views.update_item, name='update_item'),
     # path('processOrder/', views.processOrder, name='placeorder'),
 
-    # urls for admin
+    # urls for workers
     path('admin_dashboard/', views.admin_dashboard, name='dashboard'),
-    # path('create_employee/', views.create_employee.as_view(), name="create_employee"),
-
+    path('create_employee/', views.create_employee, name="create_employee"),
+    path('employee_list/', views.employee_list, name='employee_list'),
+    path('employee_details/<pk>', views.employee_details, name="employee_details"),
+    path('delete_employee/<pk>', views.employee_delete, name="delete_employee"),
+    path('order_list/', views.order_list, name="order_list"),
 ]

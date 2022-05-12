@@ -1,0 +1,59 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a onclick="goBack()">Back</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Order History List</li>
+  </ol>
+</nav><hr>
+
+<script>
+  function goBack() {
+      window.history.back();
+  }
+</script>
+
+{% for order in orders %}
+  <div class="row">
+    <div class="col-md">
+      <div class="card card-body">
+        <table class="table table-sm">
+          <tr>
+            <th>Transaction ID</th>
+            <th>Customer</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>Province</th>
+            <th>Zip-Code</th>
+            <th>Phone Number</th>
+            <th>Status</th>
+            <th>Ordered-Date</th>      
+            <th>Product Details</th>
+            <th>Action</th>
+          </tr>
+          <tr>
+            <td>{{order.id}}</td>
+            <td>{{order.first_name}} {{order.last_name}}</td>
+            <td>{{order.street}}</td>
+            <td>{{order.city}}</td>
+            <td>{{order.province}}</td>
+            <td>{{order.zip_code}}</td>
+            <td>{{order.phone_number}}</td>
+            <strong><td style="color: rgb(87, 89, 202); font-weight: 700;">{{order.status}}</td></strong>
+            <td>{{order.ordered_date|date}}</td>
+            <td><a href="{% url 'ordered-products' order.id %}">View Here</a></td>
+            <td>
+              <a href="{% url 'update-order' order.id %}">Update</a> |
+              <a href="{% url 'delete-order' order.id %}">Delete</a>    
+            </td>
+          </tr> 
+        </table>
+      </div>
+    </div>
+  </div><br>
+{% endfor %}
+
+{% endblock %}

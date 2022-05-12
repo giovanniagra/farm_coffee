@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<title>foodApp: Delete Customer</title>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+<p>Confirm to delete this account "{{employee.username}}"</p>
+
+<form action="{% url 'farm_coffee_app:delete_employee' employee.id %}" method="POST">
+
+    {% csrf_token %}
+    <a href="{% url 'farm_coffee_app:employee_list' %}">Cancel</a>
+
+    <input type="submit" name="Confirm">
+
+</form>
+{% endblock %}
