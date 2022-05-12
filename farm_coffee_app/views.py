@@ -1,45 +1,25 @@
-from asyncio import proactor_events
-from itertools import chain
-from multiprocessing import context
-from pyexpat import model
-from re import template
-from sqlite3 import complete_statement
-from tkinter.tix import Tree
-from urllib.request import ProxyDigestAuthHandler
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse
-from numpy import product
-from pytz import timezone
-from .forms import ProductForm, SignUpForm
-from django.contrib.auth import login, authenticate, logout
-from django.contrib import messages, auth
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
-from django.core.mail import EmailMessage, send_mail
-from django.contrib.auth.models import User
-from django.template.loader import render_to_string
-from django.db.models.query_utils import Q
-from django.utils.http import urlsafe_base64_encode
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
-from django.views import generic, View
-from .forms import UserForm, ProfileForm
-from .models import Product, Profile, Review, Order, Cart, Item
-import traceback
-from datetime import datetime
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.shortcuts import get_current_site
+from sklearn.neighbors import NearestNeighbors
+from .forms import ProductForm, OrderForm
+from django.contrib import messages
+from django.views import generic
+from django.urls import reverse
+from datetime import datetime
+from .models import *
+from .forms import *
 import pandas as pd
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
 import json
-# from .utils import account_activation_token
 
 
 
-# Create your views here.
+#group checking 
+def is_manager(user):
+    return (user.groups.filter(name="Manager").exists())
 
 # Recommendation Engine
 def recommendation_engine(request):
@@ -139,11 +119,84 @@ def recommendation_engine(request):
     
     return recommendations
     
+# To Display Messages in Class Based Views
 
-# @login_required(login_url='login')
+class SuccessMessageMixin:
+    success_message = ''
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        success_message = self.get_success_message(form.cleaned_data)
+        if success_message:
+            messages.success(self.request, success_message)
+        return response
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % cleaned_data
+
+class DebugMessageMixin:
+    debug_message = ''
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        debug_message = self.get_debug_message(form.cleaned_data)
+        if debug_message:
+            messages.debug(self.request, debug_message)
+        return response
+
+    def get_debug_message(self, cleaned_data):
+        return self.debug_message % cleaned_data
+
+class InfoMessageMixin:
+    info_message = ''
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        info_message = self.get_info_message(form.cleaned_data)
+        if info_message:
+            messages.debug(self.request, info_message)
+        return response
+
+    def get_info_message(self, cleaned_data):
+        return self.info_message % cleaned_data
+
+class WarningMessageMixin:
+    Warning_message = ''
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        warning_message = self.get_warning_message(form.cleaned_data)
+        if warning_message:
+            messages.warning(self.request, warning_message)
+        return response
+
+    def get_warning_message(self, cleaned_data):
+        return self.warning_message % cleaned_data
+
+class ErrorMessageMixin:
+    error_message = ''
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        error_message = self.get_error_message(form.cleaned_data)
+        if error_message:
+            messages.error(self.request, error_message)
+        return response
+
+    def get_error_message(self, cleaned_data):
+        return self.error_message % cleaned_data
+
+# Home pages for respective roles
 def home(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')[0:4]
     return render(request, 'home.html', {"products": products})
+
+@login_required(login_url='farm_coffee_app:login')
+def admin_dashboard(request):
+    context={}
+    return render(request, 'admin/admin_dashboard.html', context)
+    
+
 
 #Profile CRUD
 @login_required(login_url='farm_coffee_app:login')
@@ -166,43 +219,41 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
-# View History
+
+
+# View Order History
 @login_required(login_url='farm_coffee_app:login')
 def view_history(request):
-    orders = Order.objects.filter(user_id=request.user)
-
-    items = [order for order in orders]
-    items = Item.objects.filter(order__in=items)
-    context = {'orders': orders, 'items': items}
-    
+    orders = Order.objects.filter(user=Profile.objects.get(user=request.user))
+    if orders:
+        items = [order for order in orders]
+        items = Item.objects.filter(order__in=items)
+        context = {'orders': orders, 'items': items}
     return render(request, 'order/order_history.html', context)
 
 def view_product_history(request, pk):
-    items = Item.objects.filter(order_id=pk)
-    quantity = Cart.objects.filter(quantity__in=items)
+    items = Item.objects.filter(order=pk)
+    quantity = Quantity.objects.filter(item__in=items)
     return render(request, 'order/order_history_details.html', {'items': zip(items, quantity)})
 
+
+
 #Product CRUD
-class create_product(LoginRequiredMixin, generic.CreateView):
-    model = Product
-    template_name = 'product/product_form.html'
-    form_class = ProductForm
-    success_url = '/list' 
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
+def create_product(request):
 
-    def get_context_data(self, **kwargs):
-        ctx = super(create_product, self).get_context_data(**kwargs)
-        prods = Product.objects.all()
-        cates = []
-        for prod in prods:
-            if prod.category is not None and not prod.category in cates:
-                cates.append(prod.category)
-        ctx["cates"] = cates
-        return ctx
-
-    def form_valid(self, form):
-        
-        print("super", super().form_valid(form),)
-        return super().form_valid(form)
+    if request.method == "POST":
+        product_form = ProductForm(request.POST, instance=request.user, initial={'user':request.user})
+        if product_form.is_valid():
+            product_form.save()
+            messages.success(request, ("Product added successfully!"))
+        else:
+            messages.error(request, ('Product invalid.'))
+    else:
+        product_form = ProductForm(instance=request.user)
+    context = {'product_form':product_form}
+    return render(request, 'product/product_form.html', context)
 
 class read_product_list(LoginRequiredMixin, generic.ListView):
     template_name = 'product/read_product_list.html'
@@ -219,7 +270,6 @@ class menu( generic.ListView):
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
         
-
 class read_product_detail(generic.DetailView):
     model = Product
     template_name = 'product/read_product_detail.html'
@@ -227,7 +277,8 @@ class read_product_detail(generic.DetailView):
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
-
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 class update_product(LoginRequiredMixin, generic.UpdateView):
     model = Product
     fields = ['name', 'price', 'image', 'availability']
@@ -237,10 +288,14 @@ class update_product(LoginRequiredMixin, generic.UpdateView):
         id = self.kwargs.get('pk')
         return get_object_or_404(Product, product_id=id)
 
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
     success_url = '/list'
+
+
 
 # Functions dealing with Reviews
 @login_required(login_url='farm_coffee_app:login')
@@ -257,7 +312,6 @@ def create_review(request):
     messages.success(request, "review has been created")
     return HttpResponseRedirect(reverse('farm_coffee_app:read_product_list'))
      
-
 class read_review(LoginRequiredMixin, generic.ListView):
     template_name = 'product/read_product_detail.html'
     context_object_name = 'view_reviews'
@@ -280,89 +334,125 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
     template_name = 'review/confirm_delete_review.html'
     success_url = '/list'
 
+
+
 # Functions dealing with the cart logic  
+def total_cart_items(request):
+    total_items = ''
+    try:
+        customer = Profile.objects.get(user=request.user)
+        user = Cart.objects.filter(user=customer).values('id')[0]
+        user = Cart.objects.get(id=user['id'])
+        total_items = user.get_total_items
+    except:
+        print('----------------------> No Item is added to the cart')
+    return total_items
+
+def total_price(request):
+    total_price = 0
+    try:
+        customer = Profile.objects.get(user=request.user)
+        user = Cart.objects.filter(user=customer).values('id')[0]
+        user = Cart.objects.get(id=user['id'])
+        total_price = user.get_total_price
+    except:
+        print('-------------------------> No Item was added to your cart')
+
+    return total_price
+
 @login_required(login_url='farm_coffee_app:login')
 def cart(request):
-    try:
-        order = Order.objects.get(user=request.user)
-    except Order.DoesNotExist:
-        messages.debug(request, "Can't access cart. Try to add on of our items!")
-        return redirect('farm_coffee_app:menu')
-
-    # order = order.first()
-    items = Cart.objects.filter(order=order).order_by('-date_added')
-    context = {'items':items, 'order':order}
-    print(context)
-    print(items)
-    return render(request, 'cart/cart.html', context)
+    user = Profile.objects.get(user=request.user)
+    products = Cart.objects.filter(user=user)
+    context = {'products': products,'total_price': total_price(request), 'cartProducts': total_cart_items(request)}
+    return render(request,'cart/cart.html', context)
   
-# Functions dealing with checkout logic
+# Functions dealing with cart and checkout logic
 @login_required(login_url='farm_coffee_app:login')
 def checkout(request):
-    form_details = ProfileForm()
-    form_name = UserForm()
+    user = Profile.objects.get(user=request.user)
+    context = {'cartProducts':total_cart_items(request), 'total_price': total_price(request)}
 
-    order = Order.objects.get(user=request.user)
-    items = Cart.objects.filter(order=order).order_by('-date_added')
-    context = {'items':items, 'order':order, 'form_details':form_details, 'form_name':form_name}
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            cart = Cart.objects.filter(user = user)
+            for cart in cart:
+                item = Item.objects.create(order=order, product=cart.product)
+                Quantity.objects.create(item=item, quantity=cart.quantity)
+            Cart.objects.filter(user=user).delete()
+            return redirect('farm_coffee_app:home')
+        error = form.errors
+        for e in error:
+            error = e
+        messages.warning(request, error + ' is not valid')
+        return redirect('farm_coffee_app:checkout')
     return render(request, 'checkout/checkout.html', context)
 
-# @login_required(login_url='farm_coffee_app:login')
-def update_item(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-    print('Action:', action)
-    print('Product:', productId)
-
-    customer = request.user
-    product = Product.objects.get(product_id=productId)
-    order, created = Order.objects.get_or_create(user=customer, payment_received=False)
-
-    cart, created = Cart.objects.get_or_create(order=order, product=product)
-
-    if action == 'add':
-        cart.quantity = (cart.quantity + 1)
-    elif action == 'remove':
-        cart.quantity = (cart.quantity - 1)
-    
-    cart.save()
-
-    if cart.quantity <= 0:
-        cart.delete()
-    return JsonResponse('Item was added', safe=False)
-
-# Function for processing the order
 @login_required(login_url='farm_coffee_app:login')
-def processOrder(request):
+def manage_cart(request):
     data = json.loads(request.body)
-
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order = Order.objects.get_or_create(user=customer, payment_received=False)
-        total = float(data['form']['total'])
-
-        if total == float(order.get_cart_total):
-            order.complete = True
-        order.save()
-
-        if order.shipping == True:
-            Profile.objects.create(
-            user=customer,
-            street=data['Profile']['street'],
-            city=data['Profile']['city'],
-            province=data['Profile']['province'],
-            zip_code=data['Profile']['zip_code'],
-            phone_number=data['Profile']['phone_number'],
-            )
-
-
+    product_id = data['product_id']
+    action = data['action']
+    print('Action ---->', action)
+    print('Product ID ---->', product_id )
+    if action == 'add':
+        add_to_cart(request, product_id)
     else:
-        print('User is not logged in')
-    return JsonResponse('Payment submitted..',safe=False)
+        remove_from_cart(request, product_id)
+    return JsonResponse('Action Made', safe=False)
+
+@login_required(login_url='farm_coffee_app:login')
+def add_to_cart(request, product_id):
+    user = Profile.objects.get(user=request.user)
+    product = Product.objects.get(product_id=product_id)
+    cart = Cart.objects.filter(user=user)
+    if cart:
+        item_present = Cart.objects.filter(user=user, product=product)
+        if item_present:
+            item_present.update(quantity=F('quantity') + 1)
+        else:
+            Cart.objects.create(user=user, product=product, quantity=1).save()
+    else:
+        Cart.objects.create(user=user, product=product, quantity=1)
+
+@login_required(login_url='farm_coffee_app:login')
+def remove_from_cart(request, product_id):
+    user = Profile.objects.get(user=request.user)
+    product = Product.objects.get(product_id=product_id)
+    item_present = Cart.objects.filter(user=user, product=product)
+    item_present.update(quantity=F('quantity') - 1 )
+    item = item_present.values('quantity')[0]['quantity']
+    if item <= 0:
+        item_present.delete()
 
 
+
+# Recommendation page
 def recommendation_page(request):
     recommendations=recommendation_engine(request)
     
     return render(request, "recommendations/recommendation.html", {'recommended':recommendations})
+
+
+# Creating Employees (For ADMIN ONLY)
+@login_required(login_url='farm_coffee_app:login')
+@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
+def create_employee(request):
+    user = Profile.objects.all()
+    form = EmployeeForm()
+    if request.method == "POST":
+        form = EmployeeForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(user=user).save()
+            messages.success(request, f'Employee: {form.cleaned_data["first_name"]}')
+            return redirect('farm_coffee_app:create_employee')
+        error = form.error_messages
+        for e in error:
+            error = e
+        messages.warning(request, error)
+        return redirect('farm_coffee_app:create_employee')
+    context = {'form':form, 'employee':user}
+    return render(request, 'admin/admin_employee_creation.html', context)

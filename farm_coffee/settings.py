@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'phonenumbers',
     'reset_migrations',
-
+    'mathfilters',
     'django.contrib.sites',
 ]
 

@@ -9,7 +9,7 @@ from .models import Order, Product, Profile, Review
 
 # Forms creation
 
-class SignUpForm(UserCreationForm):
+class EmployeeForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
@@ -21,7 +21,7 @@ class SignUpForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            group = Group.objects.get(name='Customer')
+            group = Group.objects.get(name='Employee')
             user.groups.add(group)
         return user
 
@@ -34,12 +34,14 @@ class UserForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('street', 'city', 'province', 'zip_code', 'phone_number')
+        fields = ("__all__")
 
 
 
 # Product Form
 class ProductForm(forms.ModelForm):
+    # user = forms.ChoiceField(widget=forms.HiddenInput(), initial=User.id)
+    
     class Meta:
         model = Product
         fields = ("__all__")

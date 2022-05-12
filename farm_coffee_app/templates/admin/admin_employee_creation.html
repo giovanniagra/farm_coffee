@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="text-center alert alert-{{message.tags }}">
+            {{ message|safe }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST" action="{% url 'farm_coffee_app:' %}">
+    {% csrf_token %}
+
+    <select name="groups" hidden>
+        <option selected>Employee</option>
+    </select>  
+    
+    <label for="name">Username</label>
+    <input type="text" name="username" size="100" required>
+    
+    <label for="price">First Name</label>
+    <input type="number" name="first_name" required>
+
+    <label for="image">Last Name</label>
+    <input type="file" name="last_name">
+
+    <label for="category">Email</label>
+    <input type="text" name="email">
+
+    
+
+    <input type="submit" value="Submission">
+    
+</form>
+
+{% endblock %}

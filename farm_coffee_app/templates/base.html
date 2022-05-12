@@ -83,6 +83,11 @@
           <ul class="navbar-nav ms-md-auto gap-2">
             {% if user.is_authenticated %}
             <li class="nav-item rounded">
+              <a class="nav-link" aria-current="page" href="{% url 'farm_coffee_app:dashboard' %}"
+                ><i class="bi bi-gear-wide-connected me-2"></i>Admin</a
+              >
+            </li>
+            <li class="nav-item rounded">
               <a class="nav-link" aria-current="page" href="/menu"
                 ><i class="bi bi-grid-fill me-2"></i>Menu</a
               >

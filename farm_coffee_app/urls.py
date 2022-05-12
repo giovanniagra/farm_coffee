@@ -20,11 +20,11 @@ urlpatterns = [
 	path('ordered_products/<pk>/', views.view_product_history, name="ordered_products"),
     
     # urls for product
-    path('create_product', views.create_product.as_view(), name='create_product'),
+    path('create_product', views.create_product, name='create_product'),
     path('list/', views.read_product_list.as_view(), name='read_product_list'),
     path('details/<int:pk>/', views.read_product_detail.as_view(), name='read_product_detail'),
-    path('update/<int:pk>/', views.update_product.as_view(), name='update_product'),
-    path('delete/<int:pk>/', views.delete_product.as_view(), name='delete_product'),
+    path('update/<int:pk>/', views.update_product, name='update_product'),
+    path('delete/<int:pk>/', views.delete_product, name='delete_product'),
 
     # urls for recommendation
     path('recommendations/', views.recommendation_page, name='recommendations'),
@@ -38,7 +38,12 @@ urlpatterns = [
     #urls for cart
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
-    path('update_item/', views.update_item, name='update_item'),
-    path('processOrder/', views.processOrder, name='placeorder'),
+    path('manage_cart/', views.manage_cart, name="manage_cart"),
+    # path('update_item/', views.update_item, name='update_item'),
+    # path('processOrder/', views.processOrder, name='placeorder'),
+
+    # urls for admin
+    path('admin_dashboard/', views.admin_dashboard, name='dashboard'),
+    # path('create_employee/', views.create_employee.as_view(), name="create_employee"),
 
 ]
