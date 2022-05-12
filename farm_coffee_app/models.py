@@ -21,10 +21,10 @@ from django.contrib.auth.models import Group
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
-    # street = models.CharField(max_length=255)
-    # city = models.CharField(max_length=255)
-    # province = models.CharField(max_length=255)
-    # zip_code = models.CharField(max_length=255)
+    street = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, blank=True)
+    province = models.CharField(max_length=255, blank=True)
+    zip_code = models.CharField(max_length=255, blank=True)
     
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
     phone_number = models.CharField(validators = [phoneNumberRegex], max_length=16)
@@ -61,13 +61,13 @@ class Product(models.Model):
     # )
     product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=50, null=True, blank=True)
     # type = models.CharField(max_length=255, null=True, blank=True)
     # topping_choices = models.CharField(max_length=2, choices=TOPPING_CHOICES)
     price = models.FloatField()
     # topping_price = models.FloatField()
-    image = models.ImageField(upload_to='product_images', default='default.jpg')
+    image = models.ImageField(upload_to='product_images', default='product_images/default.png')
     availability = models.BooleanField()
     pub_date = models.DateTimeField(auto_now_add=True, blank=True)
 
@@ -110,7 +110,7 @@ class Order(models.Model):
     zip_code = models.CharField(max_length=150)
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
     phone_number = models.CharField(validators = [phoneNumberRegex], max_length=16)
-    order_created_time = models.DateTimeField(null=True, blank=True)
+    order_created_time = models.DateTimeField(auto_now_add=True)
     time_of_delivery = models.DateTimeField(null=True, blank=True)
     delivery_completion = models.DateTimeField(null=True, blank=True)
     payment_received = models.BooleanField(null=True, blank=True)
@@ -133,8 +133,8 @@ class Order(models.Model):
         
 
 class Cart(models.Model):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, related_name="cart_items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     # order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)

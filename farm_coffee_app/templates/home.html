@@ -1,39 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-  <ol class="carousel-indicators">
-    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-  </ol>
-  <div class="carousel-inner">
-    <div class="carousel-item active" style="height:500px">
-      <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C1.png" alt="First slide">
-    </div>
-    <div class="carousel-item" style="height:500px">
-      <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C2.jpg" alt="Second slide">
-    </div>
-    <div class="carousel-item" style="height:500px">
-      <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C3.png" alt="Third slide">
-    </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" style="filter: invert(100%);" aria-hidden="true"></span>
-    <span class="sr-only" style="color: black;">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" style="filter: invert(100%);" aria-hidden="true"></span>
-    <span class="sr-only" style="color: black;">Next</span>
-  </a>
+<div class="bg-primary d-flex justify-content-center flex-row px-5">
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active" style="height:500px">
+            <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C1.png" alt="First slide">
+          </div>
+          <div class="carousel-item" style="height:500px">
+            <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C2.jpg" alt="Second slide">
+          </div>
+          <div class="carousel-item" style="height:500px">
+            <img class="d-block w-100" style="height:500px; object-fit:scale-down;" src="../static/farm_coffee_app/images/C3.png" alt="Third slide">
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" style="filter: invert(100%);" aria-hidden="true"></span>
+          <span class="sr-only" style="color: black;">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" style="filter: invert(100%);" aria-hidden="true"></span>
+          <span class="sr-only" style="color: black;">Next</span>
+        </a>
+      </div>
 </div>
 
-<section class="products" id="products">
-  <div class="heading">
 
-  </div>
-</section>
 
 {% if products %}
 <div class="container">

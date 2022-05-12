@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'reset_migrations',
     'mathfilters',
     'django.contrib.sites',
-  
+    'pwa',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -172,7 +172,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'farm_coffee_app/static/farm_coffee_app/js', 'serviceworker.js')
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'farm_coffee_app/static/farm_coffee_app/js', 'serviceworker.js')
 
 # STATIC_ROOT = os.path.join(BASE_DIR,  'static/')
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -200,19 +200,19 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
 	{
-		'src': 'static/images/fc_logo.jpg',
+		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
 		'sizes': '160x160'
 	}
 ]
 PWA_APP_ICONS_APPLE = [
 	{
-		'src': 'static/images/fc_logo.jpg',
+		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
 		'sizes': '160x160'
 	}
 ]
 PWA_APP_SPLASH_SCREEN = [
 	{
-		'src': 'static/images/fc_logo.jpg',
+		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
 		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
 	}
 ]

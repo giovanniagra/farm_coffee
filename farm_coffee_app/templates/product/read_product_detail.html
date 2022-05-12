@@ -3,7 +3,8 @@
 
 {{context}}
 {% if product %}
-    <br>    
+    <br>
+    <div class="d-flex justify-content-center">    
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-4">
@@ -15,7 +16,34 @@
               <p>(Star rating goes here)</p> 
               <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
               <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
-              <div class="add-to-cart">
+              <div class="row gx-5">
+                  <div class="col">
+                    <strong>Type of Drink</strong><br>
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="btnradio1">Hot</label>
+                      
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btnradio2">Iced</label>
+                      
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btnradio3">Frappe</label>
+                      </div>
+                  <div class="col"><br>
+                    <strong>Toppings</strong><br>
+                    <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                        <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btncheck1">Boba</label>
+                      
+                        <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btncheck2">Whipped Cream</label>
+                      
+                        <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btncheck3">Coffee Shot</label>
+                      </div>
+                  </div>
+              </div>
+              <div class="add-to-cart"><br>
               <h5>฿{{ product.price }}</h5>
               <button type="button" data-product="{{product.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
             </div>
@@ -23,15 +51,15 @@
           </form>
         </div>
       </div> 
-
+    </div>
     <form method="POST" action=""> 
         {% csrf_token %}
-   <button>Submit</button>
+    </form>
 
-</form>
-    <a href="{% url 'farm_coffee_app:update_product' product.product_id%}">Update</a>
-    <a href="{% url 'farm_coffee_app:delete_product' product.product_id%}">Delete</a>
-  
+    {% if user.is_staff %}
+    <a class="btn btn-primary" href="{% url 'farm_coffee_app:update_product' product.product_id %}">Update</a>
+    <a class="btn btn-outline-secondary" href="{% url 'farm_coffee_app:delete_product' product.product_id %}">Delete</a>
+    {% endif %}
     
     <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
         {% csrf_token %}
@@ -42,24 +70,26 @@
              <input type="number" min="0" max="5" name="rating" step="0.5" class="range-field">
     
         <label for="review_description">Review</label>
-            <input type="text" name="review_description">
-    
+            <textarea name="review_description" class="form-control"></textarea>
         <input type="submit" value="Send">
         
     </form>
    
 {% endif %}
 
-    {% if product.review.all %}
-        <ul>
-            {% for view in product.review.all %}
-                <li> {{ view.users_fk_user_id }}</li>
-                <li> {{ view.rating }}</li>
-                <li> {{ view.review_description }}</li>
-                <li> {{ view.pub_date }}</li>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                {% if product.review.all %}
+                {% for view in product.review.all %}
+                <h5 class="card-title">{{ view.users_fk_user_id }}</h5>
+                <h5 class="card-title">{{ view.rating }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ view.pub_date }}</h6>
+                <p class="card-text">{{ view.review_description }}</p>
+    
 
             {% if user.pk == view.users_fk_user_id.pk %}
-            <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a>
+            <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a> 
             <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}">Delete</a>   
             {% endif %}
                 
@@ -69,7 +99,8 @@
                 <h2>The are currently no reviews available.</h2>
             {% endif %}
             <h2>{{process_order.product_id}}</h2>
-
+        </div>
+        </div>
     <script>
         function checkbox(){
             let selectedOptions = document.querySelectorAll(".options")

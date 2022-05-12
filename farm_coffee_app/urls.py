@@ -23,8 +23,8 @@ urlpatterns = [
     path('create_product', views.create_product, name='create_product'),
     path('list/', views.read_product_list.as_view(), name='read_product_list'),
     path('details/<int:pk>/', views.read_product_detail.as_view(), name='read_product_detail'),
-    path('update/<int:pk>/', views.update_product, name='update_product'),
-    path('delete/<int:pk>/', views.delete_product, name='delete_product'),
+    path('delete/<pk>/', views.delete_product.as_view(), name='delete_product'),
+    path('update/<pk>/', views.update_product.as_view(), name='update_product'),
 
     # urls for recommendation
     path('recommendations/', views.recommendation_page, name='recommendations'),
@@ -49,4 +49,6 @@ urlpatterns = [
     path('employee_details/<pk>', views.employee_details, name="employee_details"),
     path('delete_employee/<pk>', views.employee_delete, name="delete_employee"),
     path('order_list/', views.order_list, name="order_list"),
+    # path('order_details/', views.ord)
+    path('update_order/<pk>', views.update_order, name="update_order")
 ]

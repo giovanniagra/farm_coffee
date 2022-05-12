@@ -13,7 +13,7 @@
         <img src="{{ product_list.imageURL }}" alt="{{product_list.name}}" width="300">
           
                 <div class="card-body">
-                    <h2 class="card-title">{{ product_list.name }}</h2>
+                    <h3 class="card-title">{{ product_list.name }}</h3>
                     <p class="card-text">฿{{ product_list.price }}</p>
                 </div>
                 <div class="card-body card-p">
@@ -34,7 +34,7 @@
 </div>
 {% else %}
 <div class="d-flex flex-column align-items-center">
-    <img src="../static/farm_coffee_app/images/empty_state.png">
+    <img src="../static/farm_coffee_app/images/empty_state.png" width="35%">
     <h2>The product list is currently empty. Please add product to view them in the list.</h2>
   </div>
 {% endif %}

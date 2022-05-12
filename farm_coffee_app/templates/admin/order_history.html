@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Your Ordered History</h2>
-
 {% for order in orders %}
 
 <table>
@@ -31,6 +29,11 @@
     </tr>
 </table>
 
+{% empty %}
+<div class="d-flex flex-column align-items-center">
+    <img src="../static/farm_coffee_app/images/empty_state.png" width="35%">
+    <h2>Order Something!</h2>
+</div>
 {% endfor%}
 
 {% endblock %}

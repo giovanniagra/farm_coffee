@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import user_passes_test
@@ -32,7 +33,7 @@ def recommendation_engine(request):
 
     reviews =  Review.objects.all()
     products = Product.objects.all()
-    x,y,A,B = []
+    x,y,A,B = ([] for i in range(4))
     
     for product in products:
         x=[product.product_id, product.name,product.price,product.image]
@@ -133,7 +134,9 @@ def home(request):
 
 @login_required(login_url='farm_coffee_app:login')
 def admin_dashboard(request):
-    context={}
+    products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+
+    context={'products': products}
     return render(request, 'admin/admin_dashboard.html', context)
     
 
@@ -159,15 +162,14 @@ def profilepage(request):
         'profile_form': profile_form
     })
 
-
-
-# View Order History
 @login_required(login_url='farm_coffee_app:login')
 def view_history(request):
-    orders = Order.objects.filter(user=Profile.objects.get(user=request.user))
+    orders = Order.objects.filter(user=request.user)
+    context = {}
     if orders:
         items = [order for order in orders]
         items = Item.objects.filter(order__in=items)
+        print("ITEMS", items)
         context = {'orders': orders, 'items': items}
     return render(request, 'order/order_history.html', context)
 
@@ -182,14 +184,19 @@ def view_product_history(request, pk):
 @login_required(login_url='farm_coffee_app:login')
 @user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 def create_product(request):
-
     if request.method == "POST":
-        product_form = ProductForm(request.POST, instance=request.user, initial={'user':request.user})
+        data = request.POST
+        data._mutable = True
+        data["user"] = request.user
+        data._mutable = False
+        product_form = ProductForm(data)
         if product_form.is_valid():
             product_form.save()
+            ProductForm()
             messages.success(request, ("Product added successfully!"))
+            product_form = ProductForm()
         else:
-            messages.error(request, ('Product invalid.'))
+            messages.error(request, (f'Product invalid'))
     else:
         product_form = ProductForm(instance=request.user)
     context = {'product_form':product_form}
@@ -217,8 +224,8 @@ class read_product_detail(generic.DetailView):
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
 
-@login_required(login_url='farm_coffee_app:login')
-@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
+
+#@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 class update_product(LoginRequiredMixin, generic.UpdateView):
     model = Product
     fields = ['name', 'price', 'image', 'availability']
@@ -228,13 +235,13 @@ class update_product(LoginRequiredMixin, generic.UpdateView):
         id = self.kwargs.get('pk')
         return get_object_or_404(Product, product_id=id)
 
-@login_required(login_url='farm_coffee_app:login')
-@user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
+
+# @user_passes_test(is_manager, redirect_field_name="/") #check is the logged in user is manager else redirect to home page
 class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
     success_url = '/list'
-
+    
 
 
 # Functions dealing with Reviews
@@ -278,12 +285,12 @@ class delete_review(LoginRequiredMixin, generic.DeleteView):
 
 # Functions dealing with the cart logic  
 def total_cart_items(request):
-    total_items = ''
+    total_items = 0
     try:
         customer = Profile.objects.get(user=request.user)
         user = Cart.objects.filter(user=customer).values('id')[0]
         user = Cart.objects.get(id=user['id'])
-        total_items = user.get_total_items
+        total_items = user.get_total
     except:
         print('----------------------> No Item is added to the cart')
     return total_items
@@ -294,7 +301,9 @@ def total_price(request):
         customer = Profile.objects.get(user=request.user)
         user = Cart.objects.filter(user=customer).values('id')[0]
         user = Cart.objects.get(id=user['id'])
+        print("Two")
         total_price = user.get_total_price
+        #it maybe html problem coz by defualt it reutrn 0 check line 747
     except:
         print('-------------------------> No Item was added to your cart')
 
@@ -302,9 +311,14 @@ def total_price(request):
 
 @login_required(login_url='farm_coffee_app:login')
 def cart(request):
+ 
     user = Profile.objects.get(user=request.user)
-    products = Cart.objects.filter(user=user)
-    context = {'products': products,'total_price': total_price(request), 'cartProducts': total_cart_items(request)}
+    products = Cart.objects.filter(user=user) 
+    context = {
+        'products': products, #this works
+        'total_price': total_price(request), #  this works
+        'cartProducts': total_cart_items(request)
+        }
     return render(request,'cart/cart.html', context)
   
 # Functions dealing with cart and checkout logic
@@ -312,9 +326,14 @@ def cart(request):
 def checkout(request):
     user = Profile.objects.get(user=request.user)
     context = {'cartProducts':total_cart_items(request), 'total_price': total_price(request)}
-
     if request.method == "POST":
-        form = OrderForm(request.POST)
+        data = request.POST
+        data._mutable = True
+
+        
+        data["user"] = request.user
+        data._mutable = False
+        form = OrderForm(data)
         if form.is_valid():
             order = form.save()
             cart = Cart.objects.filter(user = user)
@@ -326,7 +345,7 @@ def checkout(request):
         error = form.errors
         for e in error:
             error = e
-        messages.warning(request, error + ' is not valid')
+            messages.warning(request, error + ' is not valid')
         return redirect('farm_coffee_app:checkout')
     return render(request, 'checkout/checkout.html', context)
 
@@ -359,6 +378,7 @@ def add_to_cart(request, product_id):
 
 @login_required(login_url='farm_coffee_app:login')
 def remove_from_cart(request, product_id):
+
     user = Profile.objects.get(user=request.user)
     product = Product.objects.get(product_id=product_id)
     item_present = Cart.objects.filter(user=user, product=product)
@@ -427,14 +447,25 @@ def employee_delete(request, pk):
 @user_passes_test(is_employee, redirect_field_name="/")
 def order_list(request):
     orders = Order.objects.all()
-    context = {'orders': orders}
+
+    orderStatus ={
+        "ORD":'Ordering',
+        "PRE":'Preparing',
+        "DEL":'Delivering',
+        "DEE":'Delivered',
+    }
+
+    context = {
+        'orders': orders,
+        "orderStatus" : orderStatus
+        }
     return render(request, 'admin/order_list.html', context)
 
 
 @login_required(login_url='farm_coffee_app:login')
 @user_passes_test(is_employee, redirect_field_name="/")
 def update_order(request, pk):
-        order = Order.objects.get(id=pk)
+        order = Order.objects.get(order_id=pk)
         form = OrderForm(instance=order)
         if request.method == 'POST':
             form = OrderForm(request.POST, instance=order)

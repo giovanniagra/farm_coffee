@@ -1,31 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="d-flex flex-column justify-content-center gap-2 align-items-center">
+    <h2 class="mt-4">Creating Product</h2>
+    <form class="d-flex flex-column gap-2"  method="POST" action="{% url 'farm_coffee_app:create_product' %}">
+        {% csrf_token %}
+   
 
-<form method="POST" action="{% url 'farm_coffee_app:create_product' %}">
-    {% csrf_token %}
+         <input type="hidden" name="user" value="">
     
-    <select hidden name="user">
-        <option selected>{{User}}</option>
-    </select>
-
-    <label for="name">Product Name</label>
-    {{product_form.name}}
+         <label for="name">Product Name</label>
+         {{product_form.name}}
+         
+         <label for="price">Product Price</label>
+         {{product_form.price}}
     
-    <label for="price">Product Price</label>
-    {{product_form.price}}
-
-    <label for="image">Image</label>
-    {{product_form.image}}
-
-    <label for="category">Category</label>
-    {{product_form.category}}
+ 
+         <label for="image">Image</label>
+         {{product_form.image}}
+     
+         <label for="category">Category</label>
+         {{product_form.category}}
+         
+         <div class="inline-flex mb-4">
+             <div>
+               {{product_form.availability}}
+             <label for="availability">Product Availability</label>
+         </div>
     
-    <label for="availability">Product Availability</label>
-    {{product_form.availability}}
-
-    <input type="submit" value="Submission">
-    
-</form>
+        <input class="btn btn-success mt-2" type="submit" value="Submission">
+        
+    </form>
+</div>
 
 {% endblock %}

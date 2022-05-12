@@ -5,21 +5,24 @@
   <div class="row">
     {% for product_list in view_product_list %}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
+      <a style="text-decoration: none;" href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">
         <div class="card shadow">
-          <img src="{{ product_list.imageURL }}" class="card-img-top" alt="...">
+          <img src="{{ product_list.imageURL }}" class="card-img-top"  alt="...">
           <div class="card-body">
             <h3 class="card-title">{{ product_list.name }}</h3>
             <p class="card-text">฿{{ product_list.price }}</p>
           </div>
           <div class="card-body card-p">
+         
             <div class="row">
                 <div class="col col-md-6">
                   <button type="button" data-product="{{product_list.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
                 </div>
                 <div class="col col-xmd-6">
-                  <a class="btn btn-outline-primary" href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">View</a>
+                  <p class="btn btn-outline-primary" >View</p>
                 </div>
             </div>
+       
         </div>
         </div>
       </a>
@@ -30,7 +33,7 @@
 </div>
 {% else %}
     <div class="d-flex flex-column align-items-center">
-      <img src="../static/farm_coffee_app/images/empty_state.png">
+      <img src="../static/farm_coffee_app/images/empty_state.png" width="35%">
       <h2>The Menu is currently empty.</h2>
     </div>
 {% endif %}

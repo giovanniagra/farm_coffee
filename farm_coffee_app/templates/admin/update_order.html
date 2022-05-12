@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block block content %}
+{% block content %}
 
 <title>foodApp: Update Product</title>
 <script>
@@ -29,7 +29,10 @@
 			{% endif %}			
 			<form method="POST" enctype="multipart/form-data">
 				{% csrf_token %}
-				{{form.status_name}}	
+				{{form.status_name.label}}
+				{{form.status_name}}
+				{{form.payment_received.label}}
+				{{form.payment_received}}	
 			<input class="btn btn-primary" type="submit" name="Update Information">
 			</form>
 		</div>

@@ -1,4 +1,4 @@
-{% extends 'store/main.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
 
@@ -6,7 +6,6 @@
 <nav aria-label="breadcrumb" class="main-breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a onclick="goBack()">Back</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Order History List</li>
   </ol>
 </nav><hr>
 
@@ -22,7 +21,6 @@
       <div class="card card-body">
         <table class="table table-sm">
           <tr>
-            <th>Transaction ID</th>
             <th>Customer</th>
             <th>Street</th>
             <th>City</th>
@@ -35,19 +33,15 @@
             <th>Action</th>
           </tr>
           <tr>
-            <td>{{order.id}}</td>
             <td>{{order.first_name}} {{order.last_name}}</td>
             <td>{{order.street}}</td>
             <td>{{order.city}}</td>
             <td>{{order.province}}</td>
             <td>{{order.zip_code}}</td>
             <td>{{order.phone_number}}</td>
-            <strong><td style="color: rgb(87, 89, 202); font-weight: 700;">{{order.status}}</td></strong>
-            <td>{{order.ordered_date|date}}</td>
-            <td><a href="{% url 'ordered-products' order.id %}">View Here</a></td>
-            <td>
-              <a href="{% url 'update-order' order.id %}">Update</a> |
-              <a href="{% url 'delete-order' order.id %}">Delete</a>    
+            <strong><td style="color: rgb(87, 89, 202); font-weight: 700;">{{order.status_name}}</td></strong>
+            <td>{{order.order_created_time|date}}</td>
+              <a href="{% url 'farm_coffee_app:update_order' order.order_id %}">Update</a>    
             </td>
           </tr> 
         </table>
