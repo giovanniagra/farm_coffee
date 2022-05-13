@@ -250,7 +250,6 @@ class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
     success_url = '/admin_dashboard'
-    
 
 
 # Functions dealing with Reviews
