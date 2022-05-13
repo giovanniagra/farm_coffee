@@ -182,11 +182,11 @@ class Item(models.Model):
     product = models.ForeignKey(Product, on_delete=SET_NULL, null=True)
 
     def __str__(self):
-        return f'{self.order.user} ordered {self.product.name}'
+        return f'{self.order.user} ordered '
 
 class Quantity(models.Model):
     item = models.OneToOneField(Item, on_delete=CASCADE, null=True)
     quantity = models.IntegerField(null=True)
 
     def __str__(self):
-        return f"{self.item.product.name} Quantity = {str(self.quantity)}"
+        return f"{self.item.product} Quantity = {str(self.quantity)}"

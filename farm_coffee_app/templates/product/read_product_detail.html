@@ -13,8 +13,10 @@
           <form class="col-md-8" id="process_order">
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
-              <p>(Star rating goes here)</p> 
-              <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p>
+              <!-- <p>(Star rating goes here)</p>  -->
+              <!-- <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p> -->
+              <br>
+              <br>
               <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
               <div class="row gx-5">
                   <div class="col">
@@ -61,6 +63,9 @@
     <a class="btn btn-outline-secondary" href="{% url 'farm_coffee_app:delete_product' product.product_id %}">Delete</a>
     {% endif %}
     
+    <div class="container">
+    <div class="card">
+    <div class="card-body">
     <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
         {% csrf_token %}
       
@@ -74,6 +79,9 @@
         <input type="submit" value="Send">
         
     </form>
+</div>
+</div>
+</div>
    
 {% endif %}
 

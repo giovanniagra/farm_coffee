@@ -8,6 +8,7 @@ app_name = 'farm_coffee_app'
 urlpatterns = [
     path('', views.home, name="home"),
     path('menu', views.menu.as_view(), name='menu'),
+    path('menu/<str:slug>', views.filtered_menu, name='filtered_menu'),
     # path("register", views.registrationview, name='register'),
     # path("login", views.loginView, name="login"),
     # path('logout', views.logoutuser, name='logout'),

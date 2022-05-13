@@ -1,25 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container-wrapper">
-    {% if recommended %}
-    <h5 class="my-4 text-light">Here are some recommendations for you!</h5>
+
+<h2 class="d-flex flex-row gap-4 mt-4 justify-content-center mb-4 my-4 text-dark ">Here are some recommendations for you!<h5>
+<div class="container">
+{% if recommended %}
     <div class="row">
-        {% for item in recommended %}
-        <div class="col-4 mb-2">
-            <div class="card" style="width: 18rem">
-                <img src="{{item.image}}" alt="Card image cap" class="card-img-top" height="250px" width="200px">
-                <div class="card-footer">
-                    <small class="text-muted">{{item.name}}</small>
-                    <small class="text-muted">{{item.category}}</small>
-                </div>
+  
+      
+      {% for product_list in recommended %}
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
+        <a style="text-decoration: none;" href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">
+          <div class="card shadow">
+            <img src="{{ product_list.imageURL }}" class="card-img-top"  alt="...">
+            <div class="card-body">
+              <h3 class="card-title">{{ product_list.name }}</h3>
+              <p class="card-text">฿{{ product_list.price }}</p>
             </div>
-        </div>
-        {% endfor %}
+            <div class="card-body card-p">
+           
+              <div class="row">
+                  <div class="col col-md-6">
+                    <button type="button" data-product="{{product_list.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                  </div>
+                  <div class="col col-xmd-6">
+                    <p class="btn btn-outline-primary" >View</p>
+                  </div>
+              </div>
+         
+          </div>
+          </div>
+        </a>
+      </div>
+      
+      {% endfor %}  
     </div>
-    {% else %}
-    <h5 class="my-4 text-light">Oops! Seems like we don't have recommendations for you. Come buy some drinks and rate them! And then we'll give you some amazing suggestions!</h5>
-    {% endif %}
+  </div>
+  {% else %}
+  <div class="d-flex flex-column align-items-center">
+    <img src="../static/farm_coffee_app/images/empty_state.png" width="35%">
+    <h2>Oops! Seems like we don't have recommendations for you. Come buy some more drinks and rate them! And then we'll give you some amazing suggestions!</h2>
 </div>
+{% endif %}
+
+
+
 
 {% endblock %}

@@ -13,6 +13,17 @@ body {
     color: #222;
 }
 
+.category_links{
+    text-decoration: none;
+}
+.category_links:hover{
+    text-decoration:underline;
+}
+
+.recommendations{
+    padding: 2px 10px;
+    background-color: #76ff76;
+}
 .container {
     top: 50%;
     left: 50%;
