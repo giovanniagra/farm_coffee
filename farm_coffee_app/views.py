@@ -136,7 +136,12 @@ def home(request):
 def admin_dashboard(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
     employees = User.objects.filter(groups__name__in=['Employee'])
-    context={'products': products, 'product_form': ProductForm}
+    orders = Order.objects.all()
+    context={
+        'products': products,
+        'product_form': ProductForm,
+        'employees':employees,
+        'orders': orders,}
     return render(request, 'admin/admin_dashboard.html', context)
     
 

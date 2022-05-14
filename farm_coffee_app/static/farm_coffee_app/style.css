@@ -90,7 +90,7 @@ p.card-text{
 
 .cart-container table td {
     border: 1px solid black;
-    text-align: center
+    text-align: center;
 }
 
 .cart-container table td:nth-child(1) {
@@ -110,7 +110,7 @@ p.card-text{
 
 .cart-container table tbody img{
     width: 100px;
-    height: 80 px;
+    height: 80px;
     object-fit: cover;
 }
 
