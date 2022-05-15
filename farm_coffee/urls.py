@@ -21,14 +21,42 @@ from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
+from . import version
+from farm_coffee_app import views as farm_coffee_views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('', include('farm_coffee_app.urls')),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password/password_reset_confirm.html"), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'), name='password_reset_complete'), 
-    # path('', include('pwa.urls')),
+    path("admin/", admin.site.urls),
+    path("accounts/", include("allauth.urls")),
+    path("", include("farm_coffee_app.urls")),
+    path(
+        "password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="password/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="password/password_reset_confirm.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="password/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
+    ),
+    path(
+        "sw.js",
+        farm_coffee_views.ServiceWorkerView.as_view(), name=farm_coffee_views.ServiceWorkerView.name,
+    ),
+    path('offline/', farm_coffee_views.offline, name='offline'),
+    path('random_response', farm_coffee_views.random_response),
+    # path('send_push', farm_coffee_views.send_push),
+    # path('webpush/', include('webpush.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

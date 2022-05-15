@@ -1,0 +1,25 @@
+{
+  "name": "Farm Coffee PWA",
+  "short_name": "farmcoffee",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#8b4513",
+  "theme_color": "#228b22",
+  "description": "Test app for Farm Coffee",
+  "dir": "ltr",
+  "lang": "en-US",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/farm_coffee_app/images/fc_logo_96x96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "/static/farm_coffee_app/images/fc_logo_512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

@@ -1,4 +1,9 @@
 from django.core import serializers
+from django.views.decorators.http import require_GET, require_POST
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import user_passes_test
@@ -12,11 +17,24 @@ from django.urls import reverse
 from datetime import datetime
 from django.db.models import F
 from django.contrib.auth.models import User, Group
+from django.templatetags.static import static
 from .models import Profile, Product, Order, Cart, Review, Item, Quantity
-from .forms import EmployeeForm, UserForm, ProfileForm, ProductForm, OrderForm, ReviewForm
+from .forms import (
+    EmployeeForm,
+    UserForm,
+    ProfileForm,
+    ProductForm,
+    OrderForm,
+    ReviewForm,
+)
 import pandas as pd
 import numpy as np
 import json
+
+import logging
+import random
+import time
+from farm_coffee import version
 
 
 
@@ -499,3 +517,29 @@ def update_order(request, pk):
             return redirect(reverse('farm_coffee_app:update_order', args=[pk]))
         context = {'form': form}
         return render(request, 'admin/update_order.html', context)
+    
+class ServiceWorkerView(generic.TemplateView):
+    template_name = "sw.js"
+    content_type = "application/javascript"
+    name = "sw.js"
+
+    def get_context_data(self, **kwargs):
+        return {
+            "version": version,
+            "icon_url": static('farm_coffee_app/images/fc_logo_512x512.png'),
+            "manifest_url": static('farm_coffee_app/manifest.json'),
+            "style_url": static('farm_coffee_app/style.css'),
+            "home_url": reverse('farm_coffee_app:home'),
+            "offline_url": reverse('offline'),
+            
+        }
+
+def random_response(request):
+    response_time_ms = random.choice((0, 10, 50, 100, 1_000, 10_000))
+    response_time = response_time_ms / 1_000
+    print(f'Selected response time {response_time}')
+    time.sleep(response_time)
+    return render(request, 'random_response.html', context={'response_time': response_time})
+
+def offline(request):
+    return render(request, "offline.html")
