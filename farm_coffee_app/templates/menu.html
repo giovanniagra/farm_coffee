@@ -1,8 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
+
+
 {% if view_product_list %}
+
+<div class="d-flex flex-row gap-4 mt-4 justify-content-center mb-4">
+
+  <a href="{% url 'farm_coffee_app:recommendations' %}" class="category_links recommendations">Drinks for You!</a>
+
+
+<a href="{% url 'farm_coffee_app:filtered_menu' 'Italian Soda' %}" class="category_links">Italian Soda</a>
+  
+
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Coffee' %}" class="category_links">Coffee</a>
+      
+
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Green Tea' %}" class="category_links">Green Tea</a>
+      
+
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Matcha Green Tea' %}" class="category_links">Matcha Green Tea</a>
+      
+
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Milk 100% Natural' %}" class="category_links">Milk</a>
+      
+
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Fruit Tea' %}" class="category_links">Fruit Tea</a>
+      
+      <a href="{% url 'farm_coffee_app:filtered_menu' 'Premium Coffee' %}" class="category_links">Premium Coffee</a>
+
+      
+      
+</div>
+
+
 <div class="container">
   <div class="row">
+
+    
+      
+
     {% for product_list in view_product_list %}
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
       <a style="text-decoration: none;" href="{% url 'farm_coffee_app:read_product_detail' product_list.product_id %}">

@@ -29,7 +29,7 @@ def is_employee(user):
     return (user.groups.filter(name="Employee").exists())
 
 # Recommendation Engine
-def recommendation_engine(request):
+def recommendation_engine(request):    
 
     reviews =  Review.objects.all()
     products = Product.objects.all()
@@ -68,7 +68,8 @@ def recommendation_engine(request):
     distances, indices = knn.kneighbors(df.values, n_neighbors=number_neighbors)
     
     user_index = df.columns.tolist().index(user)
-    
+
+
     for p,t in list(enumerate(df.index)):
         if df.iloc[p, user_index] == 0:
             sim_products = indices[p].tolist()
@@ -135,8 +136,13 @@ def home(request):
 @login_required(login_url='farm_coffee_app:login')
 def admin_dashboard(request):
     products = Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
-
-    context={'products': products}
+    employees = User.objects.filter(groups__name__in=['Employee'])
+    orders = Order.objects.all()
+    context={
+        'products': products,
+        'product_form': ProductForm,
+        'employees':employees,
+        'orders': orders,}
     return render(request, 'admin/admin_dashboard.html', context)
     
 
@@ -171,7 +177,9 @@ def view_history(request):
         items = Item.objects.filter(order__in=items)
         print("ITEMS", items)
         context = {'orders': orders, 'items': items}
-    return render(request, 'order/order_history.html', context)
+        print(items)
+        print(orders)
+    return render(request, 'order/order_history_details.html', context)
 
 def view_product_history(request, pk):
     items = Item.objects.filter(order=pk)
@@ -216,6 +224,13 @@ class menu( generic.ListView):
 
     def get_queryset(self):
         return Product.objects.filter(pub_date__lte=datetime.now()).order_by('-pub_date')
+
+def filtered_menu(request, slug):
+    print(slug)
+    products = Product.objects.filter(category=slug)
+    context = {'view_product_list': products}
+
+    return render(request, 'menu.html', context)
         
 class read_product_detail(generic.DetailView):
     model = Product
@@ -230,7 +245,7 @@ class update_product(LoginRequiredMixin, generic.UpdateView):
     model = Product
     fields = ['name', 'price', 'image', 'availability']
     template_name= 'product/update_product.html'
-    success_url = '/details/{product_id}'
+    success_url = '/admin_dashboard'
     def get_object(self, queryset=None):
         id = self.kwargs.get('pk')
         return get_object_or_404(Product, product_id=id)
@@ -240,8 +255,7 @@ class update_product(LoginRequiredMixin, generic.UpdateView):
 class delete_product(LoginRequiredMixin, generic.DeleteView):
     model = Product
     template_name = 'product/confirm_delete_product.html'
-    success_url = '/list'
-    
+    success_url = '/admin_dashboard'
 
 
 # Functions dealing with Reviews
@@ -341,6 +355,7 @@ def checkout(request):
                 item = Item.objects.create(order=order, product=cart.product)
                 Quantity.objects.create(item=item, quantity=cart.quantity)
             Cart.objects.filter(user=user).delete()
+            messages.success(request, ("Your order has been submitted!"))
             return redirect('farm_coffee_app:home')
         error = form.errors
         for e in error:
@@ -367,6 +382,7 @@ def add_to_cart(request, product_id):
     user = Profile.objects.get(user=request.user)
     product = Product.objects.get(product_id=product_id)
     cart = Cart.objects.filter(user=user)
+    messages.success(request, ("Product added to cart!"))
     if cart:
         item_present = Cart.objects.filter(user=user, product=product)
         if item_present:
@@ -391,8 +407,11 @@ def remove_from_cart(request, product_id):
 
 # Recommendation page
 def recommendation_page(request):
-    recommendations=recommendation_engine(request)
-    
+    user = Review.objects.filter(users_fk_user_id=request.user)
+    if user == User.objects.get(id): 
+        recommendations=recommendation_engine(request)
+    else:
+        return render(request, "socialaccount/profile_page.html")
     return render(request, "recommendations/recommendation.html", {'recommended':recommendations})
 
 
@@ -472,11 +491,11 @@ def update_order(request, pk):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Order is updated successfully')
-                return redirect(reverse('update-order', args=[pk]))
+                return redirect(reverse('farm_coffee_app:update_order', args=[pk]))
             error = form.errors
             for e in error:
                 error = e
             messages.warning(request, f'Invalid {error}')
-            return redirect(reverse('update-product', args=[pk]))
+            return redirect(reverse('farm_coffee_app:update_order', args=[pk]))
         context = {'form': form}
         return render(request, 'admin/update_order.html', context)

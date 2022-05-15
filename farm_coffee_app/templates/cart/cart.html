@@ -35,11 +35,11 @@
           
             {% for item in products %}
             <div class="cart-row">
-                <div style="flex:2;"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
                 <div style="flex:2"><p>{{item.product.name}}</p></div>
-                <div style="flex:1"><p>฿{{item.product.price|floatformat:2}}</p></div>
+                <div style="flex:1"><p> {{item.product.price|floatformat:2}}</p></div>
                 <div style="flex:1">
-                    <p class="quantity">x{{item.quantity}}</p>
+                    <p class="quantity">X{{item.quantity}}</p>
                     <div class="quantity">
                         <img data-product="{{item.product.product_id}}" data-action="add" class="chg-quantity update-cart" src="{% static 'farm_coffee_app/images/arrow_up.png' %}">
                         <img data-product="{{item.product.product_id}}" data-action="remove" class="chg-quantity update-cart" src="{% static 'farm_coffee_app/images/arrow_down.png' %}">  
