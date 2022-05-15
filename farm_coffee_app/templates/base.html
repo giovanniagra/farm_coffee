@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#228b22"/>
     <link rel="apple-touch-icon"
           href="{% static 'farm_coffee_app/images/fc_logo_96x96.png' %}">
-    <title>Home</title>
+    <title>Farm Coffee Filter</title>
     <!-- <meta http-equiv="refresh" content="1" /> -->
     <!-- Bootstrap CSS -->
     <link rel="stylesheet"
@@ -113,22 +113,63 @@
             <li>
                 <hr class="dropdown-divider" />
             </li>
-            <li>
-            <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a
-            >
-        </li>
-    {% else %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'account_login' %}">Login</a>
-        </li>
-    {% endif %}
-</ul>
-</li>
-</ul>
-</div>
-</div>
-</nav>
-{% if messages %}
+            <li class="nav-item rounded">
+              <a class="nav-link" href="{% url 'farm_coffee_app:history' %}"
+                ><i class="bi bi-arrow-counterclockwise me-2"></i>History</a
+              >
+            </li>
+            <!-- <li class="nav-item rounded">
+              <a class="nav-link" href="#"
+                ><i class="bi bi-bell-fill me-2"></i>Notification</a
+              >
+            </li> -->
+            <li class="nav-item rounded">
+              <a id="cart_count" class="nav-link" href="/cart">
+                <i class="bi bi-cart-fill me-2"></i>Cart 
+                {% if user.profile.cart_items.all.first.get_total %}
+                ({{user.profile.cart_items.all.first.get_total}})
+                {% endif %}
+                </a
+              >
+            </li>
+   
+            
+            <li class="nav-item dropdown rounded">
+              <a
+                class="nav-link dropdown-toggle"
+                href="/profile"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                ><i class="bi bi-person-fill me-2"></i>{{user}}</a
+              >
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdown"
+              >
+                <li><a class="dropdown-item" href="/profile">Account</a></li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_logout' %}"
+                    >Logout</a
+                  >
+                </li>
+                {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                </li>
+                {% endif %}
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% if messages %}
     <ul class="messages">
         {% for message in messages %}
             <div class="container-fluid">

@@ -10,6 +10,8 @@
     {% endfor %}
 {% endif %}
 
+<div class="d-flex flex-column justify-content-center gap-2 align-items-center">
+    <h2 class="mt-4">Creating Employee</h2>
 <form method="POST" action="">
     {% csrf_token %}
 
@@ -48,6 +50,7 @@
     <input type="submit" value="Create Employee">
     
 </form>
+</div>
 
 
 {% endblock %}

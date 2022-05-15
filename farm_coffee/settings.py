@@ -174,7 +174,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'farm_coffee_app/static/farm_coffee_app/js', 'serviceworker.js')
+# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'farm_coffee_app/static/farm_coffee_app/js', 'serviceworker.js')
 
 # STATIC_ROOT = os.path.join(BASE_DIR,  'static/')
 STATICFILES_DIRS = [BASE_DIR / "farm_coffee_app/static"]

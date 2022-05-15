@@ -11,10 +11,27 @@
 		color: #ffc107;
 	}
 </style>
+
+
+
+</script>
   <body>
+	  <div class="d-flex flex-row gap-4 align-item-center">
+		<ul class="nav nav-pills nav-fill">
+			<li class="active">
+				<a onclick="getInfos('order')" data-toggle="tab">View Order List</a>
+			</li>
+			<li>
+				<a onclick="getInfos('product')" data-toggle="tab">View Product List</a>
+			</li>
+			<li>
+				<a onclick="getInfos('employee')" data-toggle="tab">View Employee List</a>
+			</li>
+		</ul>
+	  </div>
     <br>
 	<!-- Product Management -->
-    <div class="container">
+    <div id="product_info" class="container hidden tab-pane">
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
@@ -22,8 +39,8 @@
 						<h2>Manage <b>Products</b></h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addProductModal" class="btn btn-success" data-toggle="modal"><i class="bi bi-plus-square me-2"></i> <span>Add Product</span></a>
-						<a href="#deleteProductModal" class="btn btn-danger" data-toggle="modal"><i class="bi bi-dash-square me-2"></i> <span>Delete</span></a>						
+						<a href="{% url 'farm_coffee_app:create_product' %}" class="btn btn-success"><i class="bi bi-plus-square me-2"></i> <span>Add Product</span></a>
+						<a href="" class="btn btn-danger"><i class="bi bi-dash-square me-2"></i><span>Delete</span></a>					
 					</div>
                 </div>
             </div>
@@ -44,23 +61,25 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="product_table">
 					{% for product in products %}
                     <tr>
-						<td>
+						<th>
 							<span class="custom-checkbox">
 								<input type="checkbox" id="checkbox1" name="options[]" value="1">
 								<label for="checkbox1"></label>
 							</span>
+						</th>
+                        <td height=100 width=100>
+							<img src="{{product.image}}"> 
 						</td>
-                        <td>{{product.image}}</td>
                         <td>{{product.name}}</td>
-						<td>{{product.price}}</td>
+						<td>฿{{product.price}}</td>
                         <td>{{product.category}}</td>
                         <td>{{product.availability}}</td>
                         <td>
-                            <a href="#editProductModal" class="edit" data-toggle="modal"><i class="bi bi-pencil-fill yellow-color me-2" data-toggle="tooltip" title="Edit"></i></a>
-                            <a href="#deleteProductModal" class="delete" data-toggle="modal"><i class="bi bi-trash3-fill red-color" data-toggle="tooltip" title="Delete"></i></a>
+                            <a href="{% url 'farm_coffee_app:update_product' product.pk %}" class="edit"><i class="bi bi-pencil-fill yellow-color me-2" data-toggle="tooltip" title="Edit"></i></a>
+                            <a href="{% url 'farm_coffee_app:delete_product' product.pk %}" class="delete"><i class="bi bi-trash3-fill red-color" data-toggle="tooltip" title="Delete"></i></a>
                         </td>
                     </tr>	
 					{% endfor %}
@@ -69,110 +88,10 @@
 
         </div>
     </div>
-	<!-- Add Product Modal HTML -->
-	<div id="addProductModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form method="POST" action="{% url 'farm_coffee_app:create_product' %}">
-                    {% csrf_token %}
-					<div class="modal-header">						
-						<h4 class="modal-title">Add Product</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<div class="form-group">
-							<label>Product Name</label>
-							<input type="text" name="name" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Product Price</label>
-							<input type="number" name="price" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Image</label>
-							<input type="file" name="image" class="form-control">
-						</div>
-						<div class="form-group">
-							<label>Category</label>
-							<input type="text" name="category" class="form-control" required>
-						</div>
-                        <div class="form-group">
-							<label>Product Availability</label>
-							<input type="checkbox" name="availability" class="form-check" required>
-						</div>						
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Edit Product Modal HTML -->
-	<div id="editProductModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">						
-						<h4 class="modal-title">Edit Product</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<div class="form-group">
-							<label>Product Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Product Price</label>
-							<input type="number" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Image</label>
-							<input type="file" class="form-control">
-						</div>
-						<div class="form-group">
-							<label>Category</label>
-							<input type="text" class="form-control" required>
-						</div>
-                        <div class="form-group">
-							<label>Product Availability</label>
-							<input type="checkbox" class="form-check" required>
-						</div>				
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-primary" value="Save">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Delete Product Modal HTML -->
-	<div id="deleteProductModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">						
-						<h4 class="modal-title">Delete Product</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<p>Are you sure you want to delete these products?</p>
-						<p class="text-warning"><small>This action cannot be undone.</small></p>
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
+	
 <!-- Employee Management -->
 <br>
-    <div class="container">
+    <div id="employee_info" class="container hidden tab-pane">
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
@@ -180,7 +99,7 @@
 						<h2>Manage <b>Employee</b></h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="bi bi-plus-square me-2"></i> <span>Add Employee</span></a>
+						<a href="{% url 'farm_coffee_app:create_employee' %}" class="btn btn-success"><i class="bi bi-plus-square me-2"></i> <span>Add Employee</span></a>
 						<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="bi bi-dash-square me-2"></i> <span>Delete</span></a>						
 					</div>
                 </div>
@@ -200,7 +119,8 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="employee_table">
+					{% for employee in employees %}
                     <tr>
 						<td>
 							<span class="custom-checkbox">
@@ -208,126 +128,75 @@
 								<label for="checkbox2"></label>
 							</span>
 						</td>
-                        <td>John</td>
-                        <td>Doe</td>
-						<td>johndoe@gmail.com</td>
+                        <td>{{employee.first_name}}</td>
+                        <td>{{employee.last_name}}</td>
+						<td>{{employee.email}}</td>
                         <td>
-                            <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="bi bi-pencil-fill yellow-color me-2" data-toggle="tooltip" title="Edit"></i></a>
-                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="bi bi-trash3-fill red-color" data-toggle="tooltip" title="Delete"></i></a>
+                            <a href="{% url 'farm_coffee_app:delete_employee' employee.id %}" class="delete"><i class="bi bi-trash3-fill red-color" data-toggle="tooltip" title="Delete"></i></a>
                         </td>
-                    </tr>					 
+                    </tr>
+					{% endfor %}					 
                 </tbody>
             </table>
         </div>
     </div>
-	<!-- Add Employee Modal HTML -->
-	<div id="addEmployeeModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form method="POST" action=>
-                    {% csrf_token %}
-					<div class="modal-header">						
-						<h4 class="modal-title">Add Employee</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+<!-- Order Management -->
+<br>
+    <div id="order_info" class="container tab-pane active">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+						<h2>Manage <b>Order</b></h2>
 					</div>
-					<div class="modal-body">					
-						<div class="form-group">
-							<label>Username</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>First Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Last Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Email</label>
-							<input type="email" class="form-control" required>
-						</div>
-                        <div class="form-group">
-							<label>Password</label>
-							<input type="password" class="form-check" required>
-						</div>
-						<div class="form-group">
-							<label>Confirm Password</label>
-							<input type="password" class="form-check" required>
-						</div>						
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Edit Employee Modal HTML -->
-	<div id="editEmployeeModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">						
-						<h4 class="modal-title">Edit Employee</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<div class="form-group">
-							<label>Username</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>First Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Last Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Email</label>
-							<input type="email" class="form-control" required>
-						</div>
-                        <div class="form-group">
-							<label>Password</label>
-							<input type="password" class="form-check" required>
-						</div>
-						<div class="form-group">
-							<label>Confirm Password</label>
-							<input type="password" class="form-check" required>
-						</div>				
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-primary" value="Save">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Delete Employee Modal HTML -->
-	<div id="deleteEmployeeModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">						
-						<h4 class="modal-title">Delete Employee</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<p>Are you sure you want to delete these employees?</p>
-						<p class="text-warning"><small>This action cannot be undone.</small></p>
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+						<th>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="selectAllOrder">
+								<label for="selectAllOrder"></label>
+							</span>
+						</th>
+                        <th>Customer</th>
+						<th>Street</th>
+                        <th>City</th>
+                        <th>Zip-Code</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Ordered-Date</th>
+                        <th>Product Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="order_table">
+					{% for order in orders %}
+                    <tr>
+						<td>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="checkbox3" name="options[]" value="1">
+								<label for="checkbox3"></label>
+							</span>
+						</td>
+                        <td>{{order.first_name}} {{order.last_name}}</td>
+                        <td>{{order.street}}</td>
+						<td>{{order.city}}</td>
+						<td>{{order.province}}</td>
+						<td>{{order.zip_code}}</td>
+						<td>{{order.phone_number}}}</td>
+                        <td>
+                            <a href="{% url 'farm_coffee_app:update_order' order.order_id %}" class="edit"><i class="bi bi-pencil-fill yellow-color me-2" data-toggle="tooltip" title="Edit"></i></a>
+                        </td>
+                    </tr>
+					{% endfor %}					 
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 <script>
 	// For Product Dashboard
     $(document).ready(function(){
@@ -335,7 +204,7 @@
 	$('[data-toggle="tooltip"]').tooltip();
 	
 	// Select/Deselect checkboxes
-	var checkbox = $('table tbody input[type="checkbox"]');
+	var checkbox = $('table #product_table input[type="checkbox"]');
 	$("#selectAllProduct").click(function(){
 		if(this.checked){
 			checkbox.each(function(){
@@ -360,7 +229,7 @@
 	$('[data-toggle="tooltip"]').tooltip();
 	
 	// Select/Deselect checkboxes
-	var checkbox = $('table tbody input[type="checkbox"]');
+	var checkbox = $('table #employee_table input[type="checkbox"]');
 	$("#selectAllEmployee").click(function(){
 		if(this.checked){
 			checkbox.each(function(){
@@ -378,7 +247,63 @@
 		}
 	});
 });
+
+// For Order Dashboard
+$(document).ready(function(){
+	// Activate tooltip
+	$('[data-toggle="tooltip"]').tooltip();
+	
+	// Select/Deselect checkboxes
+	var checkbox = $('table #order_table input[type="checkbox"]');
+	$("#selectAllOrder").click(function(){
+		if(this.checked){
+			checkbox.each(function(){
+				this.checked = true;                        
+			});
+		} else{
+			checkbox.each(function(){
+				this.checked = false;                        
+			});
+		} 
+	});
+	checkbox.click(function(){
+		if(!this.checked){
+			$("#selectAllOrder").prop("checked", false);
+		}
+	});
+});
+
+const prod = document.getElementById("product_info")
+const emp = document.getElementById("employee_info")
+const order = document.getElementById("order_info")
+
+
+function getInfos(type) {
+
+
+	if(type=="product"){
+		prod.classList.remove("hidden");
+		order.classList.add("hidden");
+		emp.classList.add("hidden");
+
+	}else if(type=="employee"){
+		emp.classList.remove("hidden");
+		prod.classList.add("hidden");
+		order.classList.add("hidden");
+
+	}else if(type=="order"){
+		order.classList.remove("hidden");
+		prod.classList.add("hidden");
+		emp.classList.add("hidden");
+	}
+  
+}
+
 </script>
+
+		
+
+	
 </body>
 </html>
 
