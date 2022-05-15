@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+import django_heroku
 from django.contrib.messages import constants as messages
 
 
@@ -191,5 +192,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-import django_heroku
+# Activate Django-Heroku.
 django_heroku.settings(locals())
