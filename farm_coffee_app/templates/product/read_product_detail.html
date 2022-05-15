@@ -3,129 +3,118 @@
 
 {{context}}
 {% if product %}
-    <br>
-    <div class="d-flex justify-content-center">    
-    <div class="card mb-3" style="max-width: 540px;">
+
+<div class="container d-flex justify-content-center">
+    <div class="card" style="width: 50rem;">
         <div class="row g-0">
-          <div class="col-md-4">
-            <img src="{{ product.imageURL }}" class="img-fluid rounded-start" alt="...">
-          </div>
-          <form class="col-md-4" id="process_order">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <!-- <p>(Star rating goes here)</p>  -->
-              <!-- <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p> -->
-              <br>
-              <br>
-              <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
-              <div class="row gx-5">
-                  <div class="col">
-                    <strong>Type of Drink</strong><br>
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="btnradio1">Hot</label>
-                      
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio2">Iced</label>
-                      
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio3">Frappe</label>
-                      </div>
-                  <div class="col"><br>
-                    <strong>Toppings</strong><br>
-                    <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-                        <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck1">Boba</label>
-                      
-                        <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck2">Whipped Cream</label>
-                      
-                        <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck3">Coffee Shot</label>
-                      </div>
-                  </div>
-              </div>
-              <div class="add-to-cart"><br>
-              <h5>฿{{ product.price }}</h5>
-              <button type="button" data-product="{{product.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+            <div class="col-md-4">
+                <img src="{{ product.imageURL }}" class="img-fluid rounded-start" alt="...">
             </div>
-            </div>
-          </form>
+            <form class="col-md-8" id="process_order">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                        <!-- <p>(Star rating goes here)</p>  -->
+                        <!-- <p class="card-text"><small class="text-muted">{{ product.availability }}</small></p> -->
+                    <br>
+                        <input type="hidden" name="product" id="product_id" value="{{ product.product_id }}"/>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Type of Drink</strong><br>
+                                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                                            <label class="btn btn-outline-primary" for="btnradio1">Hot</label>
+                                        
+                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btnradio2">Iced</label>
+                                        
+                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btnradio3">Frappe</label>
+                                        </div>
+                                        <div class="col"><br>
+                                    <strong>Toppings</strong><br>
+                                        <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="btncheck1">Boba</label>
+                            
+                                <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="btncheck2">Whipped Cream</label>
+                            
+                                <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="btncheck3">Coffee Shot</label>
+                                        </div>
+                                        </div>
+                                </div>
+                                <div class="add-to-cart mb-3"><br>
+                                    <h5><bold>฿{{ product.price }}</bold></h5>
+                                    <button type="button" data-product="{{product.product_id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                                </div>
+                            </div>
+                </div>
+            </form>
+            <hr>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body">
-              {% if product.review.all %}
-              {% for view in product.review.all %}
-              <h5 class="card-title">{{ view.users_fk_user_id }}</h5>
-              <h5 class="card-title">{{ view.rating }}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">{{ view.pub_date }}</h6>
-              <p class="card-text">{{ view.review_description }}</p>
-  
-
-          {% if user.pk == view.users_fk_user_id.pk %}
-          <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a> 
-          <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}">Delete</a>   
-          {% endif %}
-              
-  {% endfor %}
-      </ul>
-          {% else %}
-              <h2>The are currently no reviews available.</h2>
-          {% endif %}
-          <h2>{{process_order.product_id}}</h2>
-      </div>
-      </div>
-      </div> 
+        <br>
+    
+<div style="width: 80%;" class="container d-flex flex-column justify-content-center">
+    {% if product.review.all %}
+    {% for view in product.review.all %}
+    <div class="border border-2 rounded p-2">
+        <div class="d-flex justify-content-between mb-2">
+            <h6><strong>{{ view.users_fk_user_id }}</strong></h6>
+            <h6><strong>Rating: {{ view.rating }}</strong></h6>
+            <h6><strong>{{ view.pub_date }}</strong></h6>
+        </div>
+        <h6>{{ view.review_description }}</h6>
+        {% if user.pk == view.users_fk_user_id.pk %}
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}" class="btn btn-success">Update</a> 
+            <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}" class="btn btn-outline-secondary">Delete</a>  
+        </div>
+        {% endif %}
     </div>
-    
-    <form method="POST" action=""> 
-        {% csrf_token %}
-    </form>
-
-    {% if user.is_staff %}
-    <a class="btn btn-primary" href="{% url 'farm_coffee_app:update_product' product.product_id %}">Update</a>
-    <a class="btn btn-outline-secondary" href="{% url 'farm_coffee_app:delete_product' product.product_id %}">Delete</a>
+    <br>
+     
+    {% endfor %}
+      
+    {% else %}
+    <div class="d-flex justify-content-center">
+        <h5>The are currently no reviews available.</h5>
+    </div>
     {% endif %}
+    <h2>{{process_order.product_id}}</h2>
     
-    <div class="container">
-    <div class="col-md-4">
-    <div class="card">
-    <div class="card-body">
-    <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
-        {% csrf_token %}
-      
-        <input hidden name='path' value="{{ request.path }}" />
+    <div class="border border-2 rounded p-2">
+        <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
+            {% csrf_token %}
+            <input hidden name='path' value="{{ request.path }}"/>
             <input hidden type="number" name="product_fk_product_id" value={{product.product_id}}>
-        <label for="rating">Rating</label>
-             <input type="number" min="0" max="5" name="rating" step="0.5" class="range-field">
-    
-        <label for="review_description">Review</label>
-            <textarea name="review_description" class="form-control"></textarea>
-        <input type="submit" value="Send">
-        
-    </form>
+            <label for="rating">Rating</label>
+                <input type="number" min="0" max="5" name="rating" step="0.5" class="range-field">
+            <!-- <label for="review_description">Review</label> -->
+                <textarea name="review_description" class="form-control" placeholder="Comment Here!"></textarea>
+            <div class="d-flex justify-content-end pt-2">    
+                <input type="submit" class="btn btn-primary" value="Send">
+            </div>
+        </form>
+    </div>
 </div>
-</div>
-</div>
-   
-{% endif %}
 
- 
-      
-    <script>
-        function checkbox(){
-            let selectedOptions = document.querySelectorAll(".options")
-            if(document.getElementById('None').checked==true){
-                selectedOptions.forEach(element => {
-                    element.disabled=true
-                    element.checked=false
-                });
-            }else{
-                selectedOptions.forEach(element => {element.disabled=false});
-            }
-        }
-    </script> 
+{% endif %}
+    </div>
+</div>
+  
+<script>
+    function checkbox(){
+    let selectedOptions = document.querySelectorAll(".options")
+    if(document.getElementById('None').checked==true){
+        selectedOptions.forEach(element => {
+            element.disabled=true
+            element.checked=false
+        });
+    }else{
+        selectedOptions.forEach(element => {element.disabled=false});
+    }
+}
+</script> 
         
 {% endblock %}
