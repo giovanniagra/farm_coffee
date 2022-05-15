@@ -14,21 +14,24 @@
 
 
 
-
-
-
 </script>
   <body>
 	  <div class="d-flex flex-row gap-4 align-item-center">
 		<ul class="nav nav-pills nav-fill">
-		  <a onclick="getInfos('order')" class="btn">View Order List</a>
-		  <a onclick="getInfos('product')" class="btn">View Product List</a>
-		  <a onclick="getInfos('employee')" class="btn">View Employee List</a>
+			<li class="active">
+				<a onclick="getInfos('order')" data-toggle="tab">View Order List</a>
+			</li>
+			<li>
+				<a onclick="getInfos('product')" data-toggle="tab">View Product List</a>
+			</li>
+			<li>
+				<a onclick="getInfos('employee')" data-toggle="tab">View Employee List</a>
+			</li>
+		</ul>
 	  </div>
-	
     <br>
 	<!-- Product Management -->
-    <div id="product_info" class="container hidden">
+    <div id="product_info" class="container hidden tab-pane">
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
@@ -88,7 +91,7 @@
 	
 <!-- Employee Management -->
 <br>
-    <div id="employee_info" class="container hidden">
+    <div id="employee_info" class="container hidden tab-pane">
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
@@ -140,7 +143,7 @@
 
 <!-- Order Management -->
 <br>
-    <div id="order_info" class="container">
+    <div id="order_info" class="container tab-pane active">
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">

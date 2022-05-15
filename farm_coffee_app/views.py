@@ -29,7 +29,7 @@ def is_employee(user):
     return (user.groups.filter(name="Employee").exists())
 
 # Recommendation Engine
-def recommendation_engine(request):
+def recommendation_engine(request):    
 
     reviews =  Review.objects.all()
     products = Product.objects.all()
@@ -68,7 +68,8 @@ def recommendation_engine(request):
     distances, indices = knn.kneighbors(df.values, n_neighbors=number_neighbors)
     
     user_index = df.columns.tolist().index(user)
-    
+
+
     for p,t in list(enumerate(df.index)):
         if df.iloc[p, user_index] == 0:
             sim_products = indices[p].tolist()
@@ -406,8 +407,11 @@ def remove_from_cart(request, product_id):
 
 # Recommendation page
 def recommendation_page(request):
-    recommendations=recommendation_engine(request)
-    
+    user = Review.objects.filter(users_fk_user_id=request.user)
+    if user == User.objects.get(id): 
+        recommendations=recommendation_engine(request)
+    else:
+        return render(request, "socialaccount/profile_page.html")
     return render(request, "recommendations/recommendation.html", {'recommended':recommendations})
 
 

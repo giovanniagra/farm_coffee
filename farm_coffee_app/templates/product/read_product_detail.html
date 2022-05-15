@@ -10,7 +10,7 @@
           <div class="col-md-4">
             <img src="{{ product.imageURL }}" class="img-fluid rounded-start" alt="...">
           </div>
-          <form class="col-md-8" id="process_order">
+          <form class="col-md-4" id="process_order">
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
               <!-- <p>(Star rating goes here)</p>  -->
@@ -52,8 +52,34 @@
             </div>
           </form>
         </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+              {% if product.review.all %}
+              {% for view in product.review.all %}
+              <h5 class="card-title">{{ view.users_fk_user_id }}</h5>
+              <h5 class="card-title">{{ view.rating }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ view.pub_date }}</h6>
+              <p class="card-text">{{ view.review_description }}</p>
+  
+
+          {% if user.pk == view.users_fk_user_id.pk %}
+          <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a> 
+          <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}">Delete</a>   
+          {% endif %}
+              
+  {% endfor %}
+      </ul>
+          {% else %}
+              <h2>The are currently no reviews available.</h2>
+          {% endif %}
+          <h2>{{process_order.product_id}}</h2>
+      </div>
+      </div>
       </div> 
     </div>
+    
     <form method="POST" action=""> 
         {% csrf_token %}
     </form>
@@ -64,6 +90,7 @@
     {% endif %}
     
     <div class="container">
+    <div class="col-md-4">
     <div class="card">
     <div class="card-body">
     <form method="POST" action="{% url 'farm_coffee_app:create_review' %}">
@@ -85,30 +112,8 @@
    
 {% endif %}
 
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                {% if product.review.all %}
-                {% for view in product.review.all %}
-                <h5 class="card-title">{{ view.users_fk_user_id }}</h5>
-                <h5 class="card-title">{{ view.rating }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ view.pub_date }}</h6>
-                <p class="card-text">{{ view.review_description }}</p>
-    
-
-            {% if user.pk == view.users_fk_user_id.pk %}
-            <a href="{% url 'farm_coffee_app:update_review' view.reviews_id %}">Update</a> 
-            <a href="{% url 'farm_coffee_app:delete_review' view.reviews_id %}">Delete</a>   
-            {% endif %}
-                
-    {% endfor %}
-        </ul>
-            {% else %}
-                <h2>The are currently no reviews available.</h2>
-            {% endif %}
-            <h2>{{process_order.product_id}}</h2>
-        </div>
-        </div>
+ 
+      
     <script>
         function checkbox(){
             let selectedOptions = document.querySelectorAll(".options")
