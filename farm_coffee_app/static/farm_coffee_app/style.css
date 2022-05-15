@@ -4,6 +4,9 @@
     --color-three: black;
 }
 
+.thing-said {
+    color: red;
+}
 
 body {
     font-family: 'Roboto', sans-serif;

@@ -61,7 +61,9 @@ INSTALLED_APPS = [
     'reset_migrations',
     'mathfilters',
     'django.contrib.sites',
-    'pwa',
+    "django_extensions",
+    'sslserver',
+    # "pyOpenSSL",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -175,7 +177,7 @@ STATIC_URL = '/static/'
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'farm_coffee_app/static/farm_coffee_app/js', 'serviceworker.js')
 
 # STATIC_ROOT = os.path.join(BASE_DIR,  'static/')
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "farm_coffee_app/static"]
 
 MEDIA_URL = 'product_images/'
 
@@ -189,32 +191,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #PWA Conversion
-PWA_APP_NAME = 'farmcoffee'
-PWA_APP_DESCRIPTION = "Farm Coffee PWA"
-PWA_APP_THEME_COLOR = '#000000'
-PWA_APP_BACKGROUND_COLOR = '#ffffff'
-PWA_APP_DISPLAY = 'standalone'
-PWA_APP_SCOPE = '/'
-PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = '/'
-PWA_APP_STATUS_BAR_COLOR = 'default'
-PWA_APP_ICONS = [
-	{
-		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
-		'sizes': '160x160'
-	}
-]
-PWA_APP_ICONS_APPLE = [
-	{
-		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
-		'sizes': '160x160'
-	}
-]
-PWA_APP_SPLASH_SCREEN = [
-	{
-		'src': 'static/farm_coffee_app/images/fc_logo.jpg',
-		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
-	}
-]
-PWA_APP_DIR = 'ltr'
-PWA_APP_LANG = 'en-US'
